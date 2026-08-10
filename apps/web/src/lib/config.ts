@@ -18,7 +18,9 @@ function readAddress(value: string | undefined): `0x${string}` | null {
 export const ESCROW_ADDRESS = readAddress(process.env.NEXT_PUBLIC_BOT_ESCROW_ADDRESS);
 
 export const PUBLIC_CONFIG = {
-  chainId: Number(process.env.NEXT_PUBLIC_BOT_CHAIN_ID ?? BOT_CHAIN_ID),
+  // Straight from `chain.ts`, not re-read from the environment. Parsing it twice is how the wagmi
+  // chain object and this config drifted apart: one honoured the override and the other did not.
+  chainId: BOT_CHAIN_ID,
   rpcUrl: process.env.NEXT_PUBLIC_BOT_RPC_URL ?? "https://rpc.botchain.ai",
   explorerUrl: process.env.NEXT_PUBLIC_BOT_EXPLORER_URL ?? "https://scan.botchain.ai",
   escrowAddress: ESCROW_ADDRESS,
