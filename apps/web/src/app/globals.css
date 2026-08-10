@@ -1290,3 +1290,115 @@ a:hover {
     display: none;
   }
 }
+
+/* ---- 19. Wallet menu + job list ----------------------------------------- */
+
+.wallet-menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.wallet-pop {
+  position: absolute;
+  top: calc(100% + var(--s3));
+  right: 0;
+  z-index: 30;
+  min-width: 22rem;
+  max-width: min(92vw, 26rem);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--s4);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+}
+
+.wallet-pop-addr {
+  margin: 0 0 var(--s3);
+  color: var(--fg-dim);
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+/* Job list rows. A whole row is the link, so the target is the size of the record rather than the
+   few characters of its title. */
+.job-row {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr auto auto;
+  align-items: center;
+  gap: var(--s5);
+  padding: var(--s4) var(--s5);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--fg);
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.job-row:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-light);
+  text-decoration: none;
+  color: var(--fg);
+}
+
+.job-row-id {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.job-row-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  min-width: 0;
+}
+
+.job-row-title {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.job-row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  align-items: center;
+}
+
+/* Which side of a job the connected wallet is on, at a glance down the column. */
+.job-row-role {
+  border: 1px solid var(--accent-dim);
+  border-radius: 999px;
+  padding: 0 0.45rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
+.job-row-amount {
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+
+.job-row-state {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  justify-content: flex-end;
+}
+
+@media (max-width: 780px) {
+  .job-row {
+    grid-template-columns: 3.5rem 1fr;
+    row-gap: var(--s3);
+  }
+  .job-row-amount,
+  .job-row-state {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+}

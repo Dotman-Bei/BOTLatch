@@ -55,6 +55,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="nav" aria-label="Main">
+          <Link href="/jobs">Jobs</Link>
           <Link href="/create">Create job</Link>
           <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
             BOTScan

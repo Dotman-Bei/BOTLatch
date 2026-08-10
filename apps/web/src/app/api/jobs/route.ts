@@ -1,5 +1,6 @@
 /**
  * POST /api/jobs — persist a brief after `createJob` has confirmed on-chain.
+ * GET  /api/jobs — list recent jobs for this deployment's chain and contract.
  *
  * Auth is the chain itself, not a session: the job must exist in the escrow, and the brief the
  * client posts must hash to the `briefHash` already committed there. Anyone can therefore submit
@@ -11,12 +12,51 @@ import { keccak256, toBytes } from "viem";
 import { z } from "zod";
 import { fail, ok, parseJobId, rateLimit, clientKey, tooManyRequests } from "@/lib/api";
 import { readJob } from "@/lib/chain-server";
+import { toPublicJob } from "@/lib/public-view";
 import { chainId, escrowAddress } from "@/lib/server-env";
 import { getStore, type JobRecord } from "@/lib/store";
 import { MAX_BRIEF_CHARS } from "@/lib/config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+/** Bounded: each entry costs one chain read, and the list is a browsing surface, not an export. */
+const MAX_LIST = 50;
+
+export async function GET(request: Request) {
+  const limit = rateLimit(clientKey(request, "jobs:list"), 60, 60_000);
+  if (!limit.allowed) return tooManyRequests(limit.retryAfterSeconds);
+
+  const requested = Number(new URL(request.url).searchParams.get("limit") ?? 25);
+  const count = Number.isFinite(requested) ? Math.min(Math.max(requested, 1), MAX_LIST) : 25;
+
+  const id = chainId();
+  const contract = escrowAddress();
+  const store = getStore();
+
+  // The store keeps every deployment it has ever served, so rows from another chain or an earlier
+  // escrow are still there. Listing those would show jobs whose ids collide with live ones.
+  const records = (await store.listJobs(MAX_LIST)).filter(
+    (record) =>
+      record.chainId === id &&
+      record.contractAddress.toLowerCase() === contract.toLowerCase(),
+  );
+
+  // On-chain state is authoritative for status and verdict, so each row is confirmed against the
+  // escrow. A record whose job cannot be read is skipped rather than shown with invented state.
+  const rows = await Promise.all(
+    records.slice(0, count).map(async (record) => {
+      try {
+        const onChain = await readJob(BigInt(record.jobId));
+        return onChain ? toPublicJob(record.jobId, id, contract, onChain, record) : null;
+      } catch {
+        return null;
+      }
+    }),
+  );
+
+  return ok({ jobs: rows.filter((row): row is NonNullable<typeof row> => row !== null) });
+}
 
 const BodySchema = z.object({
   jobId: z.string().regex(/^\d{1,78}$/),

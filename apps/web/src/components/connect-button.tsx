@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { botChain } from "@/lib/chain";
 import { PUBLIC_CONFIG } from "@/lib/config";
@@ -19,10 +19,30 @@ export function ConnectButton() {
   const { disconnect } = useDisconnect();
   const { switchChain, isPending: isSwitching, error: switchError } = useSwitchChain();
   const [mounted, setMounted] = useState(false);
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   // Wallet presence is unknowable on the server; render the neutral shell until hydration so the
   // markup matches and React does not blow away the tree.
   useEffect(() => setMounted(true), []);
+
+  // A menu that only closes via its own button strands the reader: they click elsewhere, nothing
+  // happens, and the panel sits over the page.
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(event: PointerEvent) {
+      if (!menuRef.current?.contains(event.target as Node)) setOpen(false);
+    }
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   const injectedConnector = connectors.find((c) => c.id === "injected") ?? connectors[0];
 
@@ -76,19 +96,40 @@ export function ConnectButton() {
     );
   }
 
+  // Connected: one control, not two. Disconnecting is rare and irreversible-feeling, so it sits
+  // behind a deliberate click rather than permanently occupying space beside the address.
   return (
-    <div className="row" style={{ gap: "var(--s2)" }}>
-      <span className="badge badge-accent badge-pill" title={address}>
-        <span className="dot" aria-hidden="true" />
-        {truncateAddress(address)}
-      </span>
+    <div className="wallet-menu" ref={menuRef}>
       <button
         type="button"
-        className="btn btn-ghost btn-sm btn-pill"
-        onClick={() => disconnect()}
+        className="btn btn-sm btn-pill"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        title={address}
       >
-        Disconnect
+        <span className="dot" aria-hidden="true" />
+        {truncateAddress(address)}
       </button>
+
+      {open && (
+        <div className="wallet-pop" role="menu">
+          <p className="wallet-pop-addr mono" title={address}>
+            {address}
+          </p>
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm btn-block"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              disconnect();
+            }}
+          >
+            Disconnect
+          </button>
+        </div>
+      )}
     </div>
   );
 }
