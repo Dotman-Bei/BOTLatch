@@ -175,10 +175,13 @@ move on-chain.
 - **Backups.** The store holds briefs, deliveries and evidence. If `DATABASE_URL` is empty you are
   using the JSON file in `.data/` — back it up. Losing it loses the human-readable record, not the
   funds.
-- **The watcher.** Evaluation normally runs inline when the provider uploads their delivery. If that
-  request dies between the on-chain `submitDelivery` and the upload completing, the job sits in
-  `Delivered` with no verdict. `/api/cron/tick` sweeps `DeliverySubmitted` logs and evaluates
-  whatever is pending — schedule it every few minutes:
+- **The watcher.** Evaluation has three chances to happen, in order. The upload route starts one in
+  the background without waiting, which is right for the provider but does not survive a serverless
+  host — the function is frozen the moment it returns a response, so the model call is killed
+  mid-flight. `GET /api/jobs/:id` therefore evaluates any job it finds in `Delivered` with no
+  verdict, which covers everything anyone looks at, because the outcome page polls that endpoint.
+  What is left is the job nobody opens: the provider submitted, the browser closed, no buyer has
+  loaded the page. `/api/cron/tick` sweeps `DeliverySubmitted` logs and catches those:
 
   ```bash
   curl -X POST https://your-host/api/cron/tick \
@@ -192,6 +195,74 @@ move on-chain.
   running. Run either the scheduler or the watcher, not both against one database.
 - **Monitoring.** Watch `/api/health`; alert on verifier-key absence or RPC failures. A model outage
   produces CAUTIONs (funds held), which is safe but will surface as support tickets.
+
+## 8a. Hosting on Vercel with Supabase
+
+### Database
+
+Create a Supabase project, then take the connection string from **Project Settings → Database →
+Connection string → Transaction pooler** (port `6543`), not the direct connection on `5432`.
+
+This is not a preference. Every serverless invocation opens its own connection, and a direct
+connection would exhaust Postgres' connection limit under any real traffic. The pooler exists for
+exactly this shape of client.
+
+```
+DATABASE_URL=postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:6543/postgres
+```
+
+No migration step is needed — `postgres-store.ts` creates its schema on first use. Nothing else
+changes: `getStore()` returns the Postgres store the moment `DATABASE_URL` is non-empty, and the
+JSON file store it otherwise. Setting this variable is the whole migration.
+
+If queries fail with a prepared-statement error, the pooler is in a mode `pg` disagrees with —
+switch to the **Session pooler** string and redeploy.
+
+### Project settings
+
+Set **Root Directory** to `apps/web`. Vercel then detects the npm workspace, installs from the repo
+root, and picks up `apps/web/vercel.json`. `@botlatch/verifier` is consumed as TypeScript source
+(`transpilePackages` in `next.config.mjs`), so it needs no separate build step.
+
+### Environment variables
+
+Set these in **Project Settings → Environment Variables**, for Production and Preview both. The
+`NEXT_PUBLIC_` values are compiled into the browser bundle; the rest stay server-side.
+
+| Variable | Notes |
+| --- | --- |
+| `BOT_RPC_URL`, `BOT_CHAIN_ID`, `BOT_EXPLORER_URL`, `BOT_ESCROW_ADDRESS` | Mainnet: 677 / `rpc.botchain.ai` / `scan.botchain.ai` |
+| `NEXT_PUBLIC_*` mirrors of those four | Must match the server values exactly |
+| `VERIFIER_PRIVATE_KEY` | Signs decisions, holds no funds. Never `NEXT_PUBLIC_`. |
+| `LLM_API_KEY`, `LLM_MODEL` | Model default is `claude-sonnet-5` |
+| `DATABASE_URL` | The pooler string above |
+| `APP_URL` | The deployed origin, e.g. `https://botlatch.vercel.app` |
+| `INTERNAL_API_SECRET` | Guards `/api/jobs/:id/evaluate` and `/api/cron/tick` |
+| `CRON_SECRET` | **Set to the same value as `INTERNAL_API_SECRET`** |
+
+`CRON_SECRET` is the one that is easy to miss. Vercel signs its cron requests with
+`Authorization: Bearer $CRON_SECRET`, and `authorizeInternal` checks that header against
+`INTERNAL_API_SECRET`. If they differ, every scheduled tick returns 401 — silently, since nothing
+fails loudly when a backstop stops running.
+
+`DEPLOYER_PRIVATE_KEY` is deliberately absent. The app never deploys a contract; that key belongs on
+your machine only.
+
+### The cron schedule
+
+`apps/web/vercel.json` schedules `/api/cron/tick` once a day:
+
+```json
+{ "crons": [{ "path": "/api/cron/tick", "schedule": "0 3 * * *" }] }
+```
+
+Daily looks sparse, and is deliberate. Since `GET /api/jobs/:id` evaluates on read, the cron only
+catches jobs nobody ever opens — funds are safe in escrow until it runs. Vercel's Hobby plan also
+permits only one run per day, so a tighter schedule fails the deploy outright. On Pro, `0 * * * *`
+(hourly) or `*/15 * * * *` is a reasonable tightening.
+
+Confirm it after the first deploy under **Project → Cron Jobs**, and check `/api/health` returns
+`chainReachable: true` and `verifierMatchesContract: true` before announcing the URL.
 
 ## 9. First real job
 
