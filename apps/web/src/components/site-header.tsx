@@ -19,7 +19,12 @@ import { PUBLIC_CONFIG } from "@/lib/config";
 export function SiteHeader() {
   const pathname = usePathname();
   const isLanding = pathname === "/";
-  const { faucetUrl, explorerUrl, isMainnet, networkLabel, chainId } = PUBLIC_CONFIG;
+  const { faucetUrl, explorerUrl, escrowAddress, isMainnet, networkLabel, chainId } = PUBLIC_CONFIG;
+
+  // The explorer's front page says nothing about this deployment. The contract's page is the
+  // independent record of it: verified source, and every job ever settled here. Fall back to the
+  // front page only when there is no contract to point at.
+  const explorerHref = escrowAddress ? `${explorerUrl}/address/${escrowAddress}` : explorerUrl;
 
   // Three-column grid on the landing page rather than the app's two-part row: the section links
   // belong optically centred in the bar, and centring them inside a right-aligned group would put
@@ -57,8 +62,13 @@ export function SiteHeader() {
         <nav className="nav" aria-label="Main">
           <Link href="/jobs">Jobs</Link>
           <Link href="/create">Create job</Link>
-          <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-            BOTScan
+          <a
+            href={explorerHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="The escrow contract on BOTScan: verified source, and every job ever settled here"
+          >
+            Contract
           </a>
           {faucetUrl && (
             <a href={faucetUrl} target="_blank" rel="noopener noreferrer">
