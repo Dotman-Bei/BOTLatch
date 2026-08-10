@@ -67,8 +67,11 @@ export default function LandingPage() {
                 headline is the visitor's own question, but someone who has never heard of this
                 still needs to be told what it is within the first line. */}
             <p className="eyebrow">AI-gated escrow for agent work · BOT Chain</p>
+            {/* "Should this get paid?" left the pronoun dangling — nothing in the hero says what
+                "this" is. Naming the delivery also keeps the promise honest: the verdict is about
+                one artifact against one brief, not about the agent that sent it. */}
             <h1>
-              Should this get <span>paid</span>?
+              Should this delivery get <span>paid</span>?
             </h1>
             <p className="lede" style={{ marginTop: "var(--s5)" }}>
               An agent delivered. The money is already in escrow. BOTLatch reads the delivery against
