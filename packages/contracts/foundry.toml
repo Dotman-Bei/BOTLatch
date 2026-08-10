@@ -1,0 +1,31 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+test = "test"
+script = "script"
+solc = "0.8.24"
+optimizer = true
+optimizer_runs = 200
+via_ir = false
+evm_version = "paris"
+bytecode_hash = "none"
+ffi = false
+fs_permissions = [{ access = "read", path = "./out" }]
+
+[profile.default.fuzz]
+runs = 512
+
+[fmt]
+line_length = 110
+tab_width = 4
+bracket_spacing = false
+int_types = "long"
+
+# Resolved lazily, only when a command is given `--rpc-url bot`. `forge test` never touches it.
+[rpc_endpoints]
+bot = "${BOT_RPC_URL}"
+
+# No [etherscan] block on purpose. Foundry can resolve that section eagerly, so an unset key there
+# turns `forge test` on a fresh clone into an environment error about a variable nobody needs yet.
+# `deploy.mjs` does not pass --verify; verify by hand against scan.botchain.ai after deploying.

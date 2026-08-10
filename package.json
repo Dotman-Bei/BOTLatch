@@ -1,0 +1,28 @@
+{
+  "name": "botlatch",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-gated escrow for agent work on BOT Chain.",
+  "license": "MIT",
+  "workspaces": [
+    "apps/web",
+    "packages/verifier"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace @botlatch/web",
+    "build": "npm run build --workspace @botlatch/verifier && npm run build --workspace @botlatch/web",
+    "start": "npm run start --workspace @botlatch/web",
+    "lint": "npm run typecheck",
+    "typecheck": "npm run typecheck --workspace @botlatch/verifier && npm run typecheck --workspace @botlatch/web",
+    "test": "npm run test:verifier && npm run test:contracts",
+    "test:verifier": "npm run test --workspace @botlatch/verifier",
+    "test:contracts": "forge test --root packages/contracts -vv",
+    "contracts:build": "forge build --root packages/contracts",
+    "contracts:install": "cd packages/contracts && forge install foundry-rs/forge-std@v1.9.4 OpenZeppelin/openzeppelin-contracts@v5.0.2 --no-git",
+    "contracts:deploy": "node scripts/deploy.mjs",
+    "chain:verify": "node scripts/verify-chain.mjs"
+  }
+}

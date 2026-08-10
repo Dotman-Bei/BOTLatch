@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+
+# Builds
+dist/
+build/
+*.tsbuildinfo
+
+# Foundry
+packages/contracts/out/
+packages/contracts/cache/
+packages/contracts/broadcast/
+packages/contracts/lib/
+packages/contracts/.gas-snapshot
+
+# Local dev database (file store fallback)
+.data/
+
+# Environment — NEVER commit real keys
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# Logs & OS
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Test output
+coverage/
+.vitest/
