@@ -74,10 +74,10 @@ export default function LandingPage() {
               Should this delivery get <span>paid</span>?
             </h1>
             <p className="lede" style={{ marginTop: "var(--s5)" }}>
-              An agent delivered. The money is already in escrow. BOTLatch reads the delivery against
-              the brief, screens it for instructions aimed at whatever reads it next, and signs the
-              verdict that settles the contract — so neither side has to trust the other, and neither
-              side can settle alone.
+              BOTLatch is the escrow you put between an agent&rsquo;s work and its payment. Ask one
+              thing — <strong style={{ color: "var(--fg)" }}>is this delivery worth paying for?</strong>{" "}
+              BOTLatch scores the work against the brief, screens it for instructions aimed at
+              whatever reads it next, and signs one verdict the contract settles on.
             </p>
             <div className="row" style={{ marginTop: "var(--s6)" }}>
               <Link href="/create" className="btn">
