@@ -85,28 +85,25 @@ if (!process.argv.includes("--yes")) {
   process.exit(0);
 }
 
-// `--root` is deliberately relative, resolved against `cwd` below rather than absolute. On Windows
-// this spawn goes through cmd.exe, and Node joins argv into a single command string *without*
-// quoting it — so an absolute path containing a space (a checkout under "…/VIBE CODE/…", say) would
-// arrive at forge as two arguments and fail with a confusing "unexpected argument". A relative path
-// has no spaces to split on.
-const args = [
-  "script",
-  "script/Deploy.s.sol:Deploy",
-  "--root",
-  "packages/contracts",
-  "--rpc-url",
-  rpcUrl,
-  "--broadcast",
-];
+// forge runs *inside* the contracts directory rather than being pointed at it with `--root`.
+// forge 1.7.1 rejects a relative `--root` outright ("The system cannot find the path specified"),
+// and an absolute one is not an option here: on Windows this spawn goes through cmd.exe, and Node
+// joins argv into a single command string *without* quoting it, so a checkout under a path with a
+// space ("…/VIBE CODE/…") would arrive at forge split into two arguments.
+//
+// `cwd` has neither problem. Node passes it to the OS as its own parameter, never through the
+// command string, so spaces in it are safe — and with no `--root` there is no path left in argv.
+const contractsDir = resolve(ROOT, "packages", "contracts");
 
-console.log(`\nforge ${args.slice(0, 4).join(" ")} --rpc-url <redacted> --broadcast\n`);
+const args = ["script", "script/Deploy.s.sol:Deploy", "--rpc-url", rpcUrl, "--broadcast"];
+
+console.log(`\nforge ${args.slice(0, 2).join(" ")} --rpc-url <redacted> --broadcast\n`);
 
 // The key is passed through the environment, never on the command line, so it stays out of shell
 // history and out of any process listing. The names here must match what Deploy.s.sol reads:
 // vm.envUint("DEPLOYER_PRIVATE_KEY") and vm.envAddress("VERIFIER_SIGNER").
 const child = spawn("forge", args, {
-  cwd: ROOT,
+  cwd: contractsDir,
   stdio: "inherit",
   env: { ...env, DEPLOYER_PRIVATE_KEY: deployerKey, VERIFIER_SIGNER: verifierSigner },
   shell: process.platform === "win32",

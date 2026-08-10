@@ -23,6 +23,7 @@
     "contracts:build": "forge build --root packages/contracts",
     "contracts:install": "cd packages/contracts && forge install foundry-rs/forge-std@v1.9.4 OpenZeppelin/openzeppelin-contracts@v5.0.2 --no-git",
     "contracts:deploy": "node scripts/deploy.mjs",
-    "chain:verify": "node scripts/verify-chain.mjs"
+    "chain:verify": "node scripts/verify-chain.mjs",
+    "e2e:local": "node scripts/e2e-local.mjs"
   }
 }

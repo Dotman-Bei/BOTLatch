@@ -29,6 +29,10 @@ packages/contracts/.gas-snapshot
 !.env.example
 !.env.local.example
 
+# Local Claude Code config. Holds an API token, so it must never be committed.
+# .claude/settings.json (shared, no secrets) is deliberately still tracked.
+.claude/settings.local.json
+
 # Logs & OS
 *.log
 npm-debug.log*
