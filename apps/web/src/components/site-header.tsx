@@ -21,6 +21,32 @@ export function SiteHeader() {
   const isLanding = pathname === "/";
   const { faucetUrl, explorerUrl, isMainnet, networkLabel, chainId } = PUBLIC_CONFIG;
 
+  // Three-column grid on the landing page rather than the app's two-part row: the section links
+  // belong optically centred in the bar, and centring them inside a right-aligned group would put
+  // them wherever the brand and the button happened to leave space.
+  if (isLanding) {
+    return (
+      <header className="header">
+        <div className="container header-landing">
+          <Link href="/" className="brand">
+            BOT<span>Latch</span>
+          </Link>
+
+          <nav className="nav-center" aria-label="Main">
+            <a href="#orchestration">Orchestration</a>
+            <a href="#proof">On-chain proof</a>
+          </nav>
+
+          <div className="nav-end">
+            <Link href="/create" className="btn btn-sm btn-pill">
+              Create job
+            </Link>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className="header">
       <div className="container row-between" style={{ width: "100%" }}>
@@ -28,30 +54,19 @@ export function SiteHeader() {
           BOT<span>Latch</span>
         </Link>
 
-        {isLanding ? (
-          <nav className="nav" aria-label="Main">
-            <a href="#orchestration">Orchestration</a>
-            <a href="#proof">On-chain proof</a>
-            <NetworkBadge isMainnet={isMainnet} label={networkLabel} chainId={chainId} />
-            <Link href="/create" className="btn btn-sm btn-pill">
-              Create job
-            </Link>
-          </nav>
-        ) : (
-          <nav className="nav" aria-label="Main">
-            <Link href="/create">Create job</Link>
-            <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-              BOTScan
+        <nav className="nav" aria-label="Main">
+          <Link href="/create">Create job</Link>
+          <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
+            BOTScan
+          </a>
+          {faucetUrl && (
+            <a href={faucetUrl} target="_blank" rel="noopener noreferrer">
+              Faucet
             </a>
-            {faucetUrl && (
-              <a href={faucetUrl} target="_blank" rel="noopener noreferrer">
-                Faucet
-              </a>
-            )}
-            <NetworkBadge isMainnet={isMainnet} label={networkLabel} chainId={chainId} />
-            <ConnectButton />
-          </nav>
-        )}
+          )}
+          <NetworkBadge isMainnet={isMainnet} label={networkLabel} chainId={chainId} />
+          <ConnectButton />
+        </nav>
       </div>
     </header>
   );

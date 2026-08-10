@@ -1239,3 +1239,54 @@ a:hover {
   border-left-color: var(--silver-dim);
   color: var(--muted);
 }
+
+/* ---- 18. Landing header -------------------------------------------------
+   Three columns so the section links sit at the true centre of the bar. The
+   outer tracks are equal fractions, so the middle stays put regardless of how
+   wide the wordmark or the button happen to be — centring inside a
+   right-aligned group would instead park them wherever space was left over.
+   ------------------------------------------------------------------------ */
+
+.header-landing {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+  gap: var(--s5);
+}
+
+.nav-center {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: var(--s7);
+}
+
+.nav-center a {
+  color: var(--fg-dim);
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nav-center a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.nav-end {
+  justify-self: end;
+}
+
+/* Below this the three columns cannot all fit; the section links are the part a narrow screen can
+   do without, since both targets are reachable by scrolling. */
+@media (max-width: 720px) {
+  .header-landing {
+    grid-template-columns: 1fr auto;
+  }
+  .nav-center {
+    display: none;
+  }
+}
