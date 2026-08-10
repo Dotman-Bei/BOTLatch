@@ -44,7 +44,7 @@ const PROOF = {
 const PIPELINE: ReadonlyArray<{ n: string; label: string; gate?: boolean }> = [
   { n: "01", label: "fund" },
   { n: "02", label: "deliver" },
-  { n: "03", label: "normalize" },
+  { n: "03", label: "decode" },
   { n: "04", label: "screen", gate: true },
   { n: "05", label: "judge", gate: true },
   { n: "06", label: "sign" },
@@ -275,9 +275,9 @@ export default function LandingPage() {
         </div>
 
         <p className="dim small" style={{ marginTop: "var(--s5)", maxWidth: "68ch" }}>
-          Encoded payloads are decoded before that judgement is made — base64, hex, Unicode escapes
-          and zero-width characters are normalized first, so an instruction cannot hide inside an
-          encoding the screener never expands.
+          Hidden text is unpacked first. An instruction can be scrambled into code, or written in
+          characters that never appear on screen. Both are decoded and read in plain form before
+          anything judges them, so nothing gets through simply by being unreadable.
         </p>
       </section>
 
@@ -286,8 +286,8 @@ export default function LandingPage() {
         <p className="kicker">Orchestration</p>
         <h2 className="etched">Seven stages. Two of them decide.</h2>
         <p className="section-lede">
-          Screening runs before the model, and its result cannot be overridden by anything the model
-          says afterwards. The signature is minted only once both have passed.
+          The screen runs first, and nothing the AI review says afterwards can overturn it. The
+          verdict is only signed once a delivery has cleared both.
         </p>
         <ul className="pipeline">
           {PIPELINE.map((stage, i) => (
@@ -301,11 +301,12 @@ export default function LandingPage() {
           ))}
         </ul>
         <p className="dim small" style={{ marginTop: "var(--s6)", maxWidth: "68ch" }}>
-          A model outage, a timeout, or malformed JSON resolves to CAUTION and holds the funds.{" "}
+          If a review cannot be finished — the reviewer is unreachable, too slow, or gives an answer
+          that cannot be trusted — the job holds at CAUTION and the money stays where it is.{" "}
           <strong style={{ color: "var(--fg)" }}>
-            No failure anywhere in the verification path can produce a GO
+            Nothing that goes wrong while checking can release a payment.
           </strong>{" "}
-          — the fallback is always the answer that moves no money.
+          When BOTLatch is unsure, it does nothing.
         </p>
       </section>
 

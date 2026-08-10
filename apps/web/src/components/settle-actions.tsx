@@ -80,7 +80,7 @@ export function SettleActions({
         setTxHash(hash);
         const receipt = await publicClient?.waitForTransactionReceipt({ hash });
         if (receipt && receipt.status !== "success") {
-          throw new Error("The transaction reverted. Nothing changed on-chain.");
+          throw new Error("The transaction did not go through. Nothing changed and no money moved.");
         }
         await refresh();
       } catch (caught) {
@@ -158,12 +158,13 @@ export function SettleActions({
     body = (
       <>
         <p className="dim small">
-          The verifier signed a <strong>{evaluation.verdict}</strong> decision. Submitting it applies
-          the verdict on-chain
-          {evaluation.verdict === "GO" && " and releases the payment to the provider"}
-          {evaluation.verdict === "NO_GO" && " and refunds the buyer in full"}
-          {evaluation.verdict === "CAUTION" && ", which holds the funds and hands the call to the buyer"}
-          . Anyone can submit it — the signature decides the outcome, not the sender.
+          BOTLatch signed a <strong>{evaluation.verdict}</strong> verdict. Sending it carries out
+          that decision
+          {evaluation.verdict === "GO" && " and pays the provider"}
+          {evaluation.verdict === "NO_GO" && " and returns the full amount to the buyer"}
+          {evaluation.verdict === "CAUTION" && ", which keeps the money in escrow and leaves the choice to the buyer"}
+          . Anyone can send it, including someone with no stake in the job — the signed verdict
+          decides what happens, not who submits it.
         </p>
         <button type="button" className="btn" onClick={settle} disabled={!isConnected || wrongChain || busy}>
           {pending === "settle" && <span className="spinner" aria-hidden="true" />}

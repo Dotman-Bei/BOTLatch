@@ -8,17 +8,20 @@
 const VERDICT_COPY: Record<string, { title: string; blurb: string; cls: string }> = {
   GO: {
     title: "GO",
-    blurb: "The work matches the brief and no injection or exfiltration patterns were found. Anyone can settle this job to release payment to the provider.",
+    blurb:
+      "The work answers the brief, and nothing in it tries to give instructions to whoever reads it next. Anyone can now settle this job to pay the provider.",
     cls: "verdict verdict-go",
   },
   CAUTION: {
     title: "CAUTION",
-    blurb: "The verifier could not clear this automatically. Funds stay locked in escrow until the buyer decides. Nothing has moved yet.",
+    blurb:
+      "This could not be cleared automatically, so nothing has moved. The money stays in escrow until the buyer decides to release or refund it.",
     cls: "verdict verdict-caution",
   },
   NO_GO: {
     title: "NO_GO",
-    blurb: "The delivery failed verification. Settling refunds the buyer in full; the provider is not paid.",
+    blurb:
+      "The delivery did not pass. Settling returns the full amount to the buyer, and the provider is not paid.",
     cls: "verdict verdict-no_go",
   },
 };
@@ -46,11 +49,11 @@ export function verdictBlurb(verdict: string | null | undefined): string | null 
 }
 
 const STATUS_COPY: Record<string, string> = {
-  None: "This job id does not exist on the escrow.",
-  Funded: "Funds are locked in escrow. Waiting for the provider to submit the delivery.",
-  Delivered: "The delivery is on-chain. The verifier reviews it and signs a decision.",
-  Settled: "Settled. Funds have left escrow.",
-  Cancelled: "Cancelled after the deadline passed with no delivery. The buyer was refunded.",
+  None: "No job with this number exists.",
+  Funded: "The money is locked in escrow, waiting for the provider to send their work.",
+  Delivered: "The work is in. BOTLatch is reviewing it and will sign a verdict.",
+  Settled: "Done. The money has left escrow.",
+  Cancelled: "The deadline passed with no work delivered, so the buyer was refunded.",
 };
 
 export function StatusPill({ status }: { status: string }) {

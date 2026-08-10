@@ -73,7 +73,7 @@ export function DeliverForm({ jobId, escrowAddress }: { jobId: string; escrowAdd
 
         const receipt = await publicClient.waitForTransactionReceipt({ hash });
         if (receipt.status !== "success") {
-          throw new Error("The transaction reverted. Nothing was submitted.");
+          throw new Error("The transaction did not go through. Your work was not submitted.");
         }
 
         // 2. Prove to the app that this upload comes from the provider wallet.
@@ -234,9 +234,9 @@ export function DeliverForm({ jobId, escrowAddress }: { jobId: string; escrowAdd
               spellCheck={false}
             />
             <p className="hint">
-              Between {MIN_DELIVERY_CHARS} and {MAX_DELIVERY_CHARS.toLocaleString()} characters. Only
-              the hash goes on-chain; the text is stored off-chain for verification and is never shown
-              to the public.
+              Between {MIN_DELIVERY_CHARS} and {MAX_DELIVERY_CHARS.toLocaleString()} characters. Your
+              work is never published — only a fingerprint of it goes on the blockchain. The buyer
+              and the review see the text; nobody else does.
             </p>
           </label>
 
@@ -286,8 +286,8 @@ export function DeliverForm({ jobId, escrowAddress }: { jobId: string; escrowAdd
           </button>
 
           <p className="hint" style={{ marginTop: "var(--s3)" }}>
-            Two signatures: one transaction that records the hash on-chain, then one free message
-            signature that authorises the upload. The second moves no funds.
+            Your wallet will ask twice. The first records your work on the blockchain and costs gas.
+            The second is free and just proves the upload came from you — it moves no money.
           </p>
 
           {txHash && (

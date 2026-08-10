@@ -89,7 +89,7 @@ export function CreateJobForm({ escrowAddress }: { escrowAddress: Hex }) {
 
         const receipt = await publicClient.waitForTransactionReceipt({ hash });
         if (receipt.status !== "success") {
-          throw new Error("The transaction reverted. No funds were escrowed.");
+          throw new Error("The transaction did not go through. Nothing was charged and no job was created.");
         }
 
         // Read the job id back out of the event rather than guessing from jobCount, which races
@@ -113,7 +113,7 @@ export function CreateJobForm({ escrowAddress }: { escrowAddress: Hex }) {
         }
         if (!createdId) {
           throw new Error(
-            "The job was created but its id could not be read from the receipt. Check BOTScan for the JobCreated event.",
+            "The job was created and your funds are in escrow, but this page could not read its number back. Look up the transaction on BOTScan to find it.",
           );
         }
 
@@ -291,8 +291,8 @@ export function CreateJobForm({ escrowAddress }: { escrowAddress: Hex }) {
             disabled={busy}
           />
           <p className="hint">
-            Stored off-chain. Only <code className="mono">keccak256(brief)</code> is committed to the
-            contract, so the brief can be proven unchanged later without being public on-chain.
+            Your brief is not published on the blockchain — only a fingerprint of it is. That is
+            enough to prove later that nobody edited it, without making what you wrote public.
           </p>
         </label>
 

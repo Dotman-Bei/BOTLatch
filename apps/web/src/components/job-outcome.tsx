@@ -154,8 +154,9 @@ export function JobOutcome({ jobId, escrowAddress }: { jobId: string; escrowAddr
             </DataRow>
           </dl>
           <p className="hint" style={{ marginTop: "var(--s4)" }}>
-            Hash the brief or the delivery yourself with keccak256 and compare. If the text was
-            altered after the fact, these will not match.
+            These fingerprints were recorded on-chain when the job was funded and when the work was
+            sent. If either the brief or the delivery were edited afterwards, the fingerprint would
+            no longer match — so neither side can quietly change what was agreed.
           </p>
         </div>
       </section>
@@ -180,7 +181,7 @@ export function JobOutcome({ jobId, escrowAddress }: { jobId: string; escrowAddr
 
           {evaluation.patternHits.length > 0 && (
             <div style={{ marginTop: "var(--s5)" }}>
-              <span className="label">Patterns detected</span>
+              <span className="label">Attack patterns found in the delivery</span>
               <ul className="hit-list">
                 {evaluation.patternHits.map((hit) => (
                   <li key={hit}>
@@ -214,8 +215,9 @@ export function JobOutcome({ jobId, escrowAddress }: { jobId: string; escrowAddr
       ) : (
         job.statusCode >= 2 && (
           <Notice tone="warn">
-            No evidence record is stored for this job in this deployment. The verdict on-chain is
-            still authoritative; the reasoning behind it was produced elsewhere.
+            This site has no record of the reasoning behind this job&rsquo;s verdict — it was
+            reviewed somewhere else. The verdict recorded on-chain still stands and still decides
+            the money.
           </Notice>
         )
       )}
