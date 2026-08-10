@@ -15,14 +15,36 @@ CAUTION. **No failure in verification can produce a GO.**
 
 ## Status
 
-Pre-audit. The contract is tested but has not been through external review, and nothing here has
-been deployed. Treat the first mainnet deployment as a test with an amount you are willing to lose.
+Pre-audit. The contract is tested and running on BOT Chain testnet with verified source; it has not
+been through external review, and is not yet on mainnet. Treat the first mainnet deployment as a
+test with an amount you are willing to lose.
+
+## Deployments
+
+| Network | Chain | Escrow | Explorer |
+| --- | ---: | --- | --- |
+| BOT testnet | 968 | `0xcb152965e87F765eb8b5F91CEfFA59510DA1E6B4` | [scan.bohr.life](https://scan.bohr.life/address/0xcb152965e87f765eb8b5f91ceffa59510da1e6b4) — source verified |
+| BOT mainnet | 677 | not yet deployed | [scan.botchain.ai](https://scan.botchain.ai) |
+
+All three settlement paths have been executed end to end on testnet, each driven by the verifier's
+signed decision rather than by an operator moving funds:
+
+| Verdict | Outcome | Transaction |
+| --- | --- | --- |
+| GO | provider paid 0.1 BOT | [`0x4d9afcf1…`](https://scan.bohr.life/tx/0x4d9afcf1d38bbbfa63367e9e81ddf6511dc525dec7194456a4058825ed18f1b1) |
+| NO_GO | buyer refunded, provider paid nothing | [`0x1d3170b2…`](https://scan.bohr.life/tx/0x1d3170b2e412478c12c46f92b98f593c04533159bf10394f6c65028a6fba31ba) |
+| CAUTION | funds held, then released by the buyer | [`0x6ca5e5b9…`](https://scan.bohr.life/tx/0x6ca5e5b9114cd1afa63ce52d2b14ac94b98b54edae545b4d2d617e4e8fcffc91) |
+
+The NO_GO above came from the deterministic screener recognising a prompt-injection payload with no
+model involved; the GO came from a model assessment scoring the delivery 92 on conformance and 95 on
+safety. Reproduce either with `npm run e2e:local -- hostile` or `-- clean`.
 
 ## Requirements
 
 - Node 20 or newer
 - [Foundry](https://book.getfoundry.sh/getting-started/installation) (`forge`, `cast`)
-- A browser wallet on BOT Chain (chain id **677**, RPC `https://rpc.botchain.ai`)
+- A browser wallet on BOT Chain — mainnet is chain id **677** at `https://rpc.botchain.ai`,
+  testnet is chain id **968** at `https://rpc.bohr.life` ([faucet](https://faucet.botchain.ai/basic))
 - An API key for an Anthropic-compatible chat completions endpoint
 
 ## Quickstart
@@ -167,6 +189,19 @@ The verifier suite runs a fixture corpus of benign and adversarial deliveries th
 pipeline with a stubbed model, and asserts the fail-safe invariant explicitly: an LLM that throws,
 times out, or returns nonsense yields CAUTION, never GO.
 
+Both suites stub the seams they cross. `scripts/e2e-local.mjs` does not: it drives one job through
+escrow, API, verifier, and escrow again against whatever chain `.env` points at, and asserts the
+money moved the way the verdict said it should.
+
+```bash
+npm run e2e:local -- hostile   # prompt-injection payload -> NO_GO -> buyer refunded
+npm run e2e:local -- clean     # genuine delivery -> GO -> provider paid
+```
+
+It refuses to run against mainnet. The hand-offs are where the hashes and signature formats have to
+agree, and unit tests by construction cannot cover them — every bug found on testnet so far has
+lived in a seam rather than in a layer.
+
 ## Deploying
 
 ```bash
@@ -182,7 +217,20 @@ process listings.
 
 After deploying, set `BOT_ESCROW_ADDRESS` and `NEXT_PUBLIC_BOT_ESCROW_ADDRESS`, then run
 `npm run chain:verify` again — that second run is what confirms the deployed contract trusts the
-key your server actually holds. Full checklist in [docs/deployment.md](docs/deployment.md).
+key your server actually holds.
+
+Then publish the source. BOTScan runs Blockscout on both networks, so `forge` verifies directly —
+no browser upload, no flattening:
+
+```bash
+forge verify-contract "$BOT_ESCROW_ADDRESS" src/AgentWorkEscrow.sol:AgentWorkEscrow \
+  --verifier blockscout --verifier-url https://scan.botchain.ai/api \
+  --constructor-args "$(cast abi-encode 'constructor(address,address)' "$VERIFIER_SIGNER" "$ESCROW_OWNER")"
+```
+
+`forge` prints `Response: OK` when the submission is *accepted*, which is not the same as verified —
+the bytecode comparison happens afterwards, and wrong constructor arguments fail there. Read the
+result back rather than trusting the OK. Full checklist in [docs/deployment.md](docs/deployment.md).
 
 ## Licence
 
