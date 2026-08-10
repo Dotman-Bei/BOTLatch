@@ -75,7 +75,7 @@
   --radius-lg: 3px;
 
   --maxw: 1120px;
-  --header-h: 64px;
+  --header-h: 88px;
 }
 
 /* ---- 2. Reset ---------------------------------------------------------- */
@@ -259,8 +259,19 @@ a:hover {
 .nav {
   display: flex;
   align-items: center;
-  gap: var(--s5);
+  gap: var(--s6);
   margin-left: auto;
+}
+
+/* The header is tall enough that a short viewport would lose real estate to it; shrink it back
+   rather than letting a fixed 88px eat a phone screen. */
+@media (max-width: 640px) {
+  :root {
+    --header-h: 68px;
+  }
+  .nav {
+    gap: var(--s4);
+  }
 }
 
 .nav a {
