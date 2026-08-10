@@ -13,6 +13,7 @@ import {AgentWorkEscrow} from "../src/AgentWorkEscrow.sol";
 ///   DEPLOYER_PRIVATE_KEY   funded with gas only
 ///   VERIFIER_SIGNER        public address of the verifier signing key
 ///   ESCROW_OWNER           optional; defaults to the deployer address
+///   BOT_CHAIN_ID           optional; defaults to 677 (mainnet). 968 is the testnet.
 contract Deploy is Script {
     function run() external returns (AgentWorkEscrow escrow) {
         uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
@@ -21,7 +22,17 @@ contract Deploy is Script {
         address owner = vm.envOr("ESCROW_OWNER", deployer);
 
         require(verifierSigner != address(0), "VERIFIER_SIGNER unset");
-        require(block.chainid == 677, "not BOT Chain Mainnet (expected chain id 677)");
+
+        // The check that matters is that the RPC we are broadcasting to is the chain the rest of
+        // the config was written for — a mismatch produces an escrow whose EIP-712 domain separator
+        // can never validate a decision, and the only fix is to deploy again. Pinning this to 677
+        // outright would also make it impossible to rehearse on the testnet, so compare against the
+        // configured id and default to mainnet when nothing is set.
+        uint256 expected = vm.envOr("BOT_CHAIN_ID", uint256(677));
+        require(
+            block.chainid == expected,
+            "chain id does not match BOT_CHAIN_ID (677 = mainnet, 968 = testnet)"
+        );
 
         vm.startBroadcast(deployerKey);
         escrow = new AgentWorkEscrow(verifierSigner, owner);
