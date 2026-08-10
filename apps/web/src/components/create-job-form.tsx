@@ -136,8 +136,10 @@ export function CreateJobForm({ escrowAddress }: { escrowAddress: Hex }) {
           );
         }
 
+        // Deliberately no redirect. The funding step ends with something the buyer has to act on —
+        // the provider cannot deliver until they are sent the link — and navigating away
+        // automatically pulled the job number and that link off the screen the moment they appeared.
         setPhase("done");
-        router.push(`/jobs/${createdId}`);
       } catch (caught) {
         setError(friendlyError(caught));
         setPhase("idle");
@@ -159,6 +161,62 @@ export function CreateJobForm({ escrowAddress }: { escrowAddress: Hex }) {
   );
 
   const busy = phase !== "idle" && phase !== "done";
+
+  // Funded. The form has done its job; what the buyer needs now is the job number, the link the
+  // provider needs, and a way through to watch it — not the fields they already filled in.
+  if (phase === "done" && jobId) {
+    const deliverPath = `/jobs/${jobId}/deliver`;
+    return (
+      <div className="stack">
+        <Notice tone="ok">
+          <strong>Job #{jobId} is funded.</strong> {amount.trim()} BOT is locked in the escrow
+          contract. It can only be released by a signed verdict, or returned to you if the deadline
+          passes with nothing delivered.
+        </Notice>
+
+        <section className="panel">
+          <h4 style={{ marginBottom: "var(--s4)" }}>Send this to the provider</h4>
+          <p className="dim small">
+            Nothing is reviewed until they submit their work at this link. Only{" "}
+            <span className="mono">{provider.trim()}</span> can use it.
+          </p>
+          <div className="row" style={{ gap: "var(--s3)" }}>
+            <code className="mono" style={{ wordBreak: "break-all" }}>
+              {deliverPath}
+            </code>
+            <CopyButton value={deliverPath} label="Copy link" />
+          </div>
+        </section>
+
+        <section className="panel">
+          <h4 style={{ marginBottom: "var(--s4)" }}>What happens next</h4>
+          <ol className="dim small" style={{ margin: 0, paddingLeft: "1.1rem", lineHeight: 1.9 }}>
+            <li>The provider submits their work from the wallet you named above.</li>
+            <li>BOTLatch reads it against your brief and screens it for hidden instructions.</li>
+            <li>
+              A signed verdict decides the money: paid, refunded, or held for you to choose.
+            </li>
+          </ol>
+        </section>
+
+        <div className="row">
+          <button type="button" className="btn" onClick={() => router.push(`/jobs/${jobId}`)}>
+            Track job #{jobId}
+          </button>
+          {txHash && (
+            <a
+              className="btn btn-ghost"
+              href={txUrl(txHash)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View transaction ↗
+            </a>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={submit} className="grid-2" style={{ alignItems: "start", gap: "var(--s6)" }}>

@@ -65,6 +65,24 @@ export function JobOutcome({ jobId, escrowAddress }: { jobId: string; escrowAddr
         <p className="dim" style={{ marginTop: "var(--s3)" }}>
           {statusBlurb(job.status)}
         </p>
+        {/* Which side of this job the connected wallet is on. Buyer and provider see different
+            actions and different obligations, and until now the only signal was a small "you"
+            beside an address — easy to miss, and the whole page reads differently depending on it. */}
+        <p className="role-line">
+          {isBuyer && (
+            <span className="role-tag role-buyer">You are the buyer on this job</span>
+          )}
+          {isProvider && (
+            <span className="role-tag role-provider">You are the provider on this job</span>
+          )}
+          {!isBuyer && !isProvider && (
+            <span className="role-tag role-observer">
+              {address
+                ? "You are neither party — viewing only"
+                : "Not connected — viewing only"}
+            </span>
+          )}
+        </p>
       </header>
 
       <section className="card card-static card-accent">

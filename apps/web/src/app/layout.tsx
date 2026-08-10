@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { ConnectButton } from "@/components/connect-button";
 import { Providers } from "@/components/providers";
+import { SiteHeader } from "@/components/site-header";
 import { PUBLIC_CONFIG } from "@/lib/config";
 import "./globals.css";
 
@@ -24,24 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Providers>
           <div className="shell">
-            <header className="header">
-              <div className="container row-between" style={{ width: "100%" }}>
-                <Link href="/" className="brand">
-                  BOT<span>Latch</span>
-                </Link>
-                <nav className="nav" aria-label="Main">
-                  <Link href="/create">Create job</Link>
-                  <a
-                    href={PUBLIC_CONFIG.explorerUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    BOTScan
-                  </a>
-                  <ConnectButton />
-                </nav>
-              </div>
-            </header>
+            <SiteHeader />
 
             <main className="main">{children}</main>
 

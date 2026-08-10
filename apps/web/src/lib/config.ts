@@ -7,7 +7,7 @@
  * must never be imported from a client component.
  */
 
-import { BOT_CHAIN_ID } from "./chain";
+import { BOT_CHAIN_ID, IS_MAINNET } from "./chain";
 
 function readAddress(value: string | undefined): `0x${string}` | null {
   if (!value) return null;
@@ -24,6 +24,20 @@ export const PUBLIC_CONFIG = {
   rpcUrl: process.env.NEXT_PUBLIC_BOT_RPC_URL ?? "https://rpc.botchain.ai",
   explorerUrl: process.env.NEXT_PUBLIC_BOT_EXPLORER_URL ?? "https://scan.botchain.ai",
   escrowAddress: ESCROW_ADDRESS,
+
+  /**
+   * One network per deployment, decided by env at build time — never switched in the browser.
+   *
+   * The server signs each verdict against a single chain id and contract address, and the escrow
+   * only accepts a signature bound to its own. A browser-side switch would leave the two disagreeing
+   * and every settlement would fail signature checks at the moment money moves. Changing networks is
+   * therefore a redeploy: see docs/deployment.md.
+   */
+  isMainnet: IS_MAINNET,
+  networkLabel: IS_MAINNET ? "Mainnet" : "Testnet",
+
+  /** Testnet only. Mainnet BOT is bought, not claimed. */
+  faucetUrl: IS_MAINNET ? null : "https://faucet.botchain.ai/basic",
 } as const;
 
 /** Maximum brief length, per the MVP spec. Enforced in the browser and again on the server. */

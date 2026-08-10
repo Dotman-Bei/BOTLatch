@@ -282,7 +282,7 @@ export default function LandingPage() {
       </section>
 
       {/* ---- Pipeline ------------------------------------------------------- */}
-      <section className="container" style={{ marginTop: "var(--s8)" }}>
+      <section id="orchestration" className="container anchor" style={{ marginTop: "var(--s8)" }}>
         <p className="kicker">Orchestration</p>
         <h2 className="etched">Seven stages. Two of them decide.</h2>
         <p className="section-lede">
@@ -349,7 +349,7 @@ export default function LandingPage() {
       </section>
 
       {/* ---- Proof ---------------------------------------------------------- */}
-      <section className="container" style={{ marginTop: "var(--s8)" }}>
+      <section id="proof" className="container anchor" style={{ marginTop: "var(--s8)" }}>
         <p className="kicker">On-chain proof</p>
         <h2 className="etched">Every outcome, settled for real.</h2>
         <p className="section-lede">
