@@ -26,13 +26,24 @@ const VERDICT_COPY: Record<string, { title: string; blurb: string; cls: string }
   },
 };
 
-export function VerdictBadge({ verdict }: { verdict: string | null | undefined }) {
+export function VerdictBadge({
+  verdict,
+  statusCode,
+}: {
+  verdict: string | null | undefined;
+  /** On-chain Status. 1 = Funded, 2 = Delivered. */
+  statusCode?: number;
+}) {
   const copy = verdict ? VERDICT_COPY[verdict] : undefined;
   if (!copy) {
+    // A funded job has nothing to review yet. Saying "awaiting verdict" there points the reader at
+    // the wrong party — it reads as though the check is running and slow, when in fact the provider
+    // has not sent anything and the job will sit here indefinitely until they do.
+    const waitingForDelivery = statusCode === 1;
     return (
       <span className="verdict verdict-pending">
         <span className="dot dot-pulse" aria-hidden="true" />
-        Awaiting verdict
+        {waitingForDelivery ? "Awaiting delivery" : "Awaiting verdict"}
       </span>
     );
   }

@@ -16,6 +16,7 @@ import {
   formatTimestamp,
   friendlyError,
   sameAddress,
+  truncateAddress,
 } from "@/lib/format";
 
 export function JobOutcome({ jobId, escrowAddress }: { jobId: string; escrowAddress: Hex }) {
@@ -77,7 +78,7 @@ export function JobOutcome({ jobId, escrowAddress }: { jobId: string; escrowAddr
               {formatBot(job.amountWei)}
             </p>
           </div>
-          <VerdictBadge verdict={verdictShown} />
+          <VerdictBadge verdict={verdictShown} statusCode={job.statusCode} />
         </div>
         {blurb && (
           <p className="dim small" style={{ marginTop: "var(--s4)", marginBottom: 0 }}>
@@ -97,6 +98,20 @@ export function JobOutcome({ jobId, escrowAddress }: { jobId: string; escrowAddr
         <Notice>
           You are the provider on this job.{" "}
           <Link href={`/jobs/${jobId}/deliver`}>Submit your delivery</Link>.
+        </Notice>
+      )}
+
+      {/* Without this the buyer sees a funded job, no verdict, and no indication that the next move
+          is theirs to trigger. Nothing happens until the provider is actually sent the link. */}
+      {job.statusCode === 1 && isBuyer && (
+        <Notice>
+          <strong>Waiting on the provider.</strong> Send them this link so they can submit the work
+          — nothing is reviewed until they do:{" "}
+          <Link className="mono" href={`/jobs/${jobId}/deliver`}>
+            /jobs/{jobId}/deliver
+          </Link>
+          . Only <span className="mono">{truncateAddress(job.provider)}</span> can submit against
+          this job.
         </Notice>
       )}
 
