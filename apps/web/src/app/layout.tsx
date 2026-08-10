@@ -74,13 +74,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <a href={PUBLIC_CONFIG.explorerUrl} target="_blank" rel="noopener noreferrer">
                     BOTScan ↗
                   </a>
-                  <a
-                    href="https://github.com/Dotman-Bei/BOTLatch"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    GitHub ↗
-                  </a>
                 </nav>
               </div>
             </footer>
