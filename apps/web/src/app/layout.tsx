@@ -46,12 +46,42 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main className="main">{children}</main>
 
             <footer className="footer">
-              <div className="container row-between">
-                <span>Built on BOT Chain; not affiliated with BOT Chain.</span>
-                <span className="mono">
-                  chain {PUBLIC_CONFIG.chainId}
-                  {PUBLIC_CONFIG.escrowAddress ? ` · escrow ${PUBLIC_CONFIG.escrowAddress.slice(0, 10)}…` : " · escrow not set"}
-                </span>
+              <div className="container footer-inner">
+                <div className="footer-brand">
+                  <Link href="/" className="brand">
+                    BOT<span>Latch</span>
+                  </Link>
+                  <p>
+                    AI-gated escrow for agent work. A verification agent decides whether a delivery
+                    is on-spec and safe to consume, and its signed verdict settles the contract.
+                  </p>
+                  <p className="footer-fine">
+                    Built on BOT Chain; not affiliated with BOT Chain. Chain{" "}
+                    {PUBLIC_CONFIG.chainId} · unaudited MVP software.
+                  </p>
+                </div>
+
+                <nav className="footer-links" aria-label="Footer">
+                  {PUBLIC_CONFIG.escrowAddress ? (
+                    <a
+                      href={`${PUBLIC_CONFIG.explorerUrl}/address/${PUBLIC_CONFIG.escrowAddress}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Escrow contract ↗
+                    </a>
+                  ) : null}
+                  <a href={PUBLIC_CONFIG.explorerUrl} target="_blank" rel="noopener noreferrer">
+                    BOTScan ↗
+                  </a>
+                  <a
+                    href="https://github.com/Dotman-Bei/BOTLatch"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    GitHub ↗
+                  </a>
+                </nav>
               </div>
             </footer>
           </div>

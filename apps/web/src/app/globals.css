@@ -296,9 +296,63 @@ a:hover {
 .footer {
   border-top: 1px solid var(--border);
   background: var(--bg-darker);
-  padding-block: var(--s5);
+  padding-block: var(--s7);
   color: var(--muted);
   font-size: var(--step--1);
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s6) var(--s7);
+}
+
+/* Measure, not percentage: the description should break where prose reads best rather than
+   wherever the links happen to leave room. */
+.footer-brand {
+  max-width: 52ch;
+}
+
+.footer-brand .brand {
+  font-size: var(--step-0);
+  margin-bottom: var(--s4);
+}
+
+.footer-brand p {
+  margin: 0 0 var(--s3);
+  color: var(--fg-dim);
+  line-height: 1.65;
+}
+
+/* The disclaimer is required to be present, not to be read first. */
+.footer-fine {
+  color: var(--muted);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s6);
+  margin-left: auto;
+}
+
+.footer-links a {
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+@media (max-width: 720px) {
+  .footer-links {
+    margin-left: 0;
+    gap: var(--s5);
+  }
 }
 
 /* ---- 5. Type helpers --------------------------------------------------- */
@@ -790,7 +844,7 @@ a:hover {
   position: relative;
   /* Tighter above than below: the header already supplies visual separation, so a full --s8
      here read as a gap rather than as breathing room. */
-  padding-block: var(--s6) var(--s7);
+  padding-block: var(--s7) var(--s8);
   border-bottom: 1px solid var(--border);
   overflow: hidden;
 }
