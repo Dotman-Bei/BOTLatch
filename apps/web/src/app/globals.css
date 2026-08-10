@@ -190,6 +190,13 @@ a:hover {
   padding-block: var(--s7) var(--s8);
 }
 
+/* The hero is a full-bleed band carrying its own vertical rhythm and its own bottom border. The
+   page's top padding stacked on top of that, doubling the gap under the header and pushing the
+   headline toward the fold. Scoped with :has so interior pages, which have no hero, keep theirs. */
+.main:has(> .hero:first-child) {
+  padding-top: 0;
+}
+
 .stack > * + * {
   margin-top: var(--s5);
 }
@@ -781,7 +788,9 @@ a:hover {
 
 .hero {
   position: relative;
-  padding-block: var(--s8) var(--s7);
+  /* Tighter above than below: the header already supplies visual separation, so a full --s8
+     here read as a gap rather than as breathing room. */
+  padding-block: var(--s6) var(--s7);
   border-bottom: 1px solid var(--border);
   overflow: hidden;
 }
@@ -1052,4 +1061,44 @@ a:hover {
   .status-strip {
     gap: var(--s4);
   }
+}
+
+/* ---- 15. Pill wallet control -------------------------------------------
+   The system is otherwise squared off on purpose (--radius: 2px). This one
+   control is the exception, and deliberately so: the wallet button is the only
+   thing in the header that changes state under the user, and a shape nothing
+   else on the page uses makes it findable without a colour or a label change.
+   Soft fill rather than the solid accent, because connecting is a prerequisite
+   for the real actions, not one of them.
+   ------------------------------------------------------------------------ */
+
+.btn-pill {
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  background: rgba(255, 84, 0, 0.08);
+  border-color: rgba(255, 84, 0, 0.32);
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  text-transform: none;
+  font-weight: 700;
+}
+
+.btn-pill:hover:not(:disabled) {
+  background: rgba(255, 84, 0, 0.14);
+  border-color: var(--accent);
+  color: var(--accent-bright);
+  box-shadow: none;
+}
+
+.btn-pill:disabled {
+  color: var(--muted);
+  border-color: var(--border-light);
+  background: transparent;
+}
+
+/* Connected state: the address badge and its disconnect share the pill shape so
+   the control keeps one silhouette across all three of its states. */
+.badge-pill {
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
 }

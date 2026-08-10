@@ -32,7 +32,7 @@ export function ConnectButton() {
 
   if (!mounted) {
     return (
-      <button type="button" className="btn btn-sm" disabled>
+      <button type="button" className="btn btn-sm btn-pill" disabled>
         Connect wallet
       </button>
     );
@@ -42,7 +42,12 @@ export function ConnectButton() {
     const hasInjected = typeof window !== "undefined" && "ethereum" in window;
     return (
       <div className="row" style={{ gap: "var(--s2)" }}>
-        <button type="button" className="btn btn-sm" onClick={onConnect} disabled={isPending}>
+        <button
+          type="button"
+          className="btn btn-sm btn-pill"
+          onClick={onConnect}
+          disabled={isPending}
+        >
           {isPending ? "Connecting…" : "Connect wallet"}
         </button>
         {!hasInjected && (
@@ -58,7 +63,7 @@ export function ConnectButton() {
       <div className="row" style={{ gap: "var(--s2)" }}>
         <button
           type="button"
-          className="btn btn-sm"
+          className="btn btn-sm btn-pill"
           onClick={() => switchChain({ chainId: botChain.id })}
           disabled={isSwitching}
         >
@@ -73,11 +78,15 @@ export function ConnectButton() {
 
   return (
     <div className="row" style={{ gap: "var(--s2)" }}>
-      <span className="badge badge-accent" title={address}>
+      <span className="badge badge-accent badge-pill" title={address}>
         <span className="dot" aria-hidden="true" />
         {truncateAddress(address)}
       </span>
-      <button type="button" className="btn btn-ghost btn-sm" onClick={() => disconnect()}>
+      <button
+        type="button"
+        className="btn btn-ghost btn-sm btn-pill"
+        onClick={() => disconnect()}
+      >
         Disconnect
       </button>
     </div>
