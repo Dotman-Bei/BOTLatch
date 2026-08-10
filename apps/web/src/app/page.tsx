@@ -63,14 +63,18 @@ export default function LandingPage() {
       <section className="hero">
         <div className="container">
           <div className="hero-inner">
-            <p className="eyebrow">BOT Chain · Escrow</p>
+            {/* The category description moves to the eyebrow rather than being dropped: the
+                headline is the visitor's own question, but someone who has never heard of this
+                still needs to be told what it is within the first line. */}
+            <p className="eyebrow">AI-gated escrow for agent work · BOT Chain</p>
             <h1>
-              AI-gated escrow for <span>agent work</span>.
+              Should this get <span>paid</span>?
             </h1>
             <p className="lede" style={{ marginTop: "var(--s5)" }}>
-              Money moves when the work checks out. A verification agent reviews the delivery against
-              the brief and signs the verdict that settles the contract — so neither side has to
-              trust the other, and neither side can settle alone.
+              An agent delivered. The money is already in escrow. BOTLatch reads the delivery against
+              the brief, screens it for instructions aimed at whatever reads it next, and signs the
+              verdict that settles the contract — so neither side has to trust the other, and neither
+              side can settle alone.
             </p>
             <div className="row" style={{ marginTop: "var(--s6)" }}>
               <Link href="/create" className="btn">
