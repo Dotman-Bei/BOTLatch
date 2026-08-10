@@ -147,10 +147,14 @@ export async function assessWithLlm(
         "x-api-key": apiKey,
         "anthropic-version": "2023-06-01",
       },
+      // No `temperature`. Claude Sonnet 5 and the current Opus models reject a non-default
+      // sampling parameter with a 400, which this layer would fail closed into a permanent
+      // CAUTION — indistinguishable from having no key at all. Pinning it to 0 never actually
+      // guaranteed identical output anyway; reproducibility comes from modelOutputHash, which
+      // records what the model really returned.
       body: JSON.stringify({
         model,
         max_tokens: 1024,
-        temperature: 0,
         system: SYSTEM_PROMPT,
         messages: [{ role: "user", content: buildUserMessage(brief, delivery) }],
       }),

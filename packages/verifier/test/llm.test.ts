@@ -71,7 +71,10 @@ describe("prompt construction", () => {
     expect(JSON.stringify(body.messages)).toContain("DELIVERY-MARKER");
   });
 
-  it("pins temperature to zero so verdicts are reproducible", async () => {
+  // Sending any non-default sampling parameter is a 400 on the models this verifier targets, and
+  // a 400 here fails closed to CAUTION — which looks exactly like an unconfigured key, so the
+  // cause would be invisible. Assert they are absent rather than trusting nobody re-adds them.
+  it("sends no sampling parameters, which current models reject", async () => {
     const fetchImpl = stubFetch(jsonResponse(textBlock(JSON.stringify(VALID))));
     await assessWithLlm("brief", "delivery", { ...BASE_CONFIG, fetchImpl });
 
@@ -79,7 +82,10 @@ describe("prompt construction", () => {
       string,
       RequestInit,
     ];
-    expect(JSON.parse(String(init.body)).temperature).toBe(0);
+    const body = JSON.parse(String(init.body)) as Record<string, unknown>;
+    expect(body).not.toHaveProperty("temperature");
+    expect(body).not.toHaveProperty("top_p");
+    expect(body).not.toHaveProperty("top_k");
   });
 });
 
