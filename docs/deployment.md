@@ -78,6 +78,46 @@ Wait for the transaction to confirm and note the contract address. Confirm on th
 [scan.botchain.ai](https://scan.botchain.ai). Your new escrow should show the verifier signer and
 owner you intended.
 
+## 4a. Verify the source
+
+Do this immediately after deploying, while the constructor arguments are still in front of you.
+An unverified escrow asks people to trust a bytecode blob for a contract whose entire purpose is
+being auditable.
+
+BOTScan runs Blockscout on both networks, so `forge` can verify directly — no browser upload, no
+flattening. The two networks differ only in the URL:
+
+```bash
+export PATH="$HOME/.foundry/bin:$PATH"
+cd packages/contracts
+
+# The constructor is (address verifierSigner_, address owner_) — same two values the deploy used.
+ARGS=$(cast abi-encode "constructor(address,address)" "$VERIFIER_SIGNER" "$ESCROW_OWNER")
+
+forge verify-contract "$BOT_ESCROW_ADDRESS" src/AgentWorkEscrow.sol:AgentWorkEscrow \
+  --verifier blockscout \
+  --verifier-url https://scan.botchain.ai/api \
+  --constructor-args "$ARGS"
+```
+
+For the testnet rehearsal the only change is `--verifier-url https://scan.bohr.life/api`.
+
+`forge` prints `Response: OK` and a GUID as soon as the submission is accepted — that is not the
+same as being verified. Confirm the result:
+
+```bash
+curl -s "https://scan.botchain.ai/api/v2/smart-contracts/$BOT_ESCROW_ADDRESS" \
+  | grep -o '"is_verified":[a-z]*'
+```
+
+Wrong constructor arguments are the usual failure, and they fail *after* the submission is
+accepted — the bytecode comparison is what rejects them. If `is_verified` stays `false`, re-derive
+`ARGS` from the values the deploy actually used rather than the ones you meant to use.
+
+Verified on testnet at
+[`0xcb152965…E6B4`](https://scan.bohr.life/address/0xcb152965e87f765eb8b5f91ceffa59510da1e6b4)
+with solc v0.8.24 and optimizer on, using exactly the command above.
+
 ## 5. Point the app at it
 
 ```bash
