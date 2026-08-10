@@ -886,14 +886,10 @@ a:hover {
   color: var(--accent);
 }
 
-/* Scoped to the hero: this eyebrow is the longest one in the app, and at the shared size its
-   tracking spread it wide enough to compete with the headline underneath. The step labels on the
-   other pages are short and keep the larger size. */
+/* Scoped to the hero: this is the longest eyebrow in the app. The short step labels on the other
+   pages keep the shared size. */
 .hero .eyebrow {
-  font-size: 0.625rem;
-  letter-spacing: 0.2em;
-  color: var(--silver-dim);
-  margin-bottom: var(--s4);
+  font-size: 0.5625rem;
 }
 
 /* The strip sits outside .hero-inner so it can run wider than the text column. */
