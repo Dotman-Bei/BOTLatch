@@ -237,7 +237,10 @@ a:hover {
   position: sticky;
   top: 0;
   z-index: 20;
-  height: var(--header-h);
+  /* min-height rather than height: on a narrow screen the nav wraps to a second line, and a fixed
+     height would let it spill past the border instead of growing to hold it. */
+  min-height: var(--header-h);
+  padding-block: var(--s3);
   display: flex;
   align-items: center;
   background: rgba(5, 5, 5, 0.92);
@@ -266,7 +269,9 @@ a:hover {
 .nav {
   display: flex;
   align-items: center;
-  gap: var(--s6);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--s4) var(--s6);
   margin-left: auto;
 }
 
@@ -1303,8 +1308,10 @@ a:hover {
   top: calc(100% + var(--s3));
   right: 0;
   z-index: 30;
-  min-width: 22rem;
-  max-width: min(92vw, 26rem);
+  /* No min-width: min beats max in CSS, so a 22rem floor overflowed a 375px screen no matter what
+     max-width said. Sized against the viewport instead, which cannot exceed it. */
+  width: max-content;
+  max-width: min(88vw, 26rem);
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
@@ -1414,4 +1421,112 @@ a:hover {
 .footer-wordmark {
   display: inline-flex;
   align-items: baseline;
+}
+
+/* ---- 20. Small screens --------------------------------------------------
+   Consolidated, and last so it wins. Two structural bugs are fixed at source
+   above — the nav now wraps and the header grows to hold it, and the wallet
+   popover no longer carries a min-width wider than a phone. What remains here
+   is proportion: type and padding tuned for the space rather than scaled down
+   uniformly.
+   ------------------------------------------------------------------------ */
+
+/* Headings were fixed sizes. At 360px a 2.125rem uppercase heading with negative
+   tracking breaks mid-word; these scale with the viewport and stop at the
+   original size. */
+@media (max-width: 900px) {
+  h2 {
+    font-size: clamp(1.5rem, 5.2vw, 2.125rem);
+  }
+  h3 {
+    font-size: clamp(1.25rem, 4.2vw, 1.5rem);
+  }
+}
+
+@media (max-width: 720px) {
+  .container {
+    padding-inline: var(--s4);
+  }
+
+  .main {
+    padding-block: var(--s6) var(--s7);
+  }
+
+  .hero {
+    padding-block: var(--s6) var(--s7);
+  }
+
+  /* Sections are spaced with an inline marginTop of --s8; at this width that is most of a screen
+     of empty space between every band. */
+  .container[style*="--s8"] {
+    margin-top: var(--s7) !important;
+  }
+
+  .card,
+  .panel,
+  .trace-body,
+  .trace-head,
+  .trace-foot {
+    padding: var(--s4);
+  }
+
+  .footer {
+    padding-block: var(--s6);
+  }
+
+  /* The stage chain wraps onto several lines, and an arrow at the end of a wrapped line points at
+     nothing. The order is already carried by the numbers. */
+  .pipeline .arrow {
+    display: none;
+  }
+  .pipeline {
+    gap: var(--s2);
+  }
+
+  /* Title and status stack rather than sitting at opposite ends of a narrow row. */
+  .row-between {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .nav {
+    gap: var(--s3) var(--s4);
+  }
+
+  .nav a {
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+  }
+
+  .brand {
+    font-size: var(--step-0);
+  }
+
+  /* Escrowed amount is the largest number on the outcome page and was set at the display size. */
+  .card-static .mono[style*="--step-3"] {
+    font-size: var(--step-2) !important;
+  }
+
+  .trace-body,
+  .status-strip {
+    font-size: 0.75rem;
+  }
+
+  .status-strip {
+    gap: var(--s3) var(--s5);
+  }
+
+  .btn {
+    padding: 0.65rem 1rem;
+  }
+}
+
+/* Long hex is the one thing guaranteed not to fit a phone. Everything that can hold an address or a
+   hash wraps rather than pushing the page wider than the screen. */
+.mono,
+.hash,
+code,
+pre {
+  overflow-wrap: anywhere;
 }
