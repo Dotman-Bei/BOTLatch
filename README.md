@@ -36,13 +36,16 @@ signed decision rather than by an operator moving funds:
 
 | Verdict | Outcome | Transaction |
 | --- | --- | --- |
-| GO | provider paid 0.1 BOT | [`0x4d9afcf1…`](https://scan.bohr.life/tx/0x4d9afcf1d38bbbfa63367e9e81ddf6511dc525dec7194456a4058825ed18f1b1) |
-| NO_GO | buyer refunded, provider paid nothing | [`0x1d3170b2…`](https://scan.bohr.life/tx/0x1d3170b2e412478c12c46f92b98f593c04533159bf10394f6c65028a6fba31ba) |
-| CAUTION | funds held, then released by the buyer | [`0x6ca5e5b9…`](https://scan.bohr.life/tx/0x6ca5e5b9114cd1afa63ce52d2b14ac94b98b54edae545b4d2d617e4e8fcffc91) |
+| GO | on-spec delivery, provider paid 0.1 BOT | [`0xae2dbdd9…`](https://scan.bohr.life/tx/0xae2dbdd9a4415ffe2e2fe53233ca40c22d5731a39f0eb74e7b6d6c63c9e99c39) |
+| NO_GO | prompt injection, buyer refunded | [`0x7499de76…`](https://scan.bohr.life/tx/0x7499de763f10e6f0eb33e781792fe20daad85100c6e5eb3e99512989507e03fb) |
+| CAUTION | half the brief answered, funds held for the buyer | [`0x80d307e4…`](https://scan.bohr.life/tx/0x80d307e4b415b92c6da0eb10e70f05f19252e6431b26c6639e1cde691ad0ac15) |
 
-The NO_GO above came from the deterministic screener recognising a prompt-injection payload with no
-model involved; the GO came from a model assessment scoring the delivery 92 on conformance and 95 on
-safety. Reproduce either with `npm run e2e:local -- hostile` or `-- clean`.
+Each came from a different part of the pipeline, which is the point of running all three. The NO_GO
+was caught by the deterministic screener before any model saw it. The GO was a model judgement, 92
+on conformance and 95 on safety. The CAUTION was also a model judgement — on a delivery that was
+honest and on-topic but answered two of the brief's four requirements — rather than the fail-closed
+result of an unreachable model. Reproduce with `npm run e2e:local -- hostile`, `-- clean`, or
+`-- partial`.
 
 ## Requirements
 

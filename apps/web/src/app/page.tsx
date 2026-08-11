@@ -21,20 +21,20 @@ const PROOF = {
     {
       verdict: "GO",
       tone: "go" as const,
-      outcome: "Provider paid 0.1 BOT",
-      tx: "0x4d9afcf1d38bbbfa63367e9e81ddf6511dc525dec7194456a4058825ed18f1b1",
+      outcome: "On-spec delivery — provider paid 0.1 BOT",
+      tx: "0xae2dbdd9a4415ffe2e2fe53233ca40c22d5731a39f0eb74e7b6d6c63c9e99c39",
     },
     {
       verdict: "NO_GO",
       tone: "stop" as const,
-      outcome: "Buyer refunded, provider paid nothing",
-      tx: "0x1d3170b2e412478c12c46f92b98f593c04533159bf10394f6c65028a6fba31ba",
+      outcome: "Prompt injection — buyer refunded, provider paid nothing",
+      tx: "0x7499de763f10e6f0eb33e781792fe20daad85100c6e5eb3e99512989507e03fb",
     },
     {
       verdict: "CAUTION",
       tone: "caution" as const,
-      outcome: "Funds held until the buyer chose",
-      tx: "0x6ca5e5b9114cd1afa63ce52d2b14ac94b98b54edae545b4d2d617e4e8fcffc91",
+      outcome: "Half the brief answered — funds held until the buyer chose",
+      tx: "0x80d307e4b415b92c6da0eb10e70f05f19252e6431b26c6639e1cde691ad0ac15",
     },
   ],
 } as const;
