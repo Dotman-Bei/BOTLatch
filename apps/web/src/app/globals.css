@@ -1402,3 +1402,16 @@ a:hover {
     justify-content: flex-start;
   }
 }
+
+/* Footer lockup: mark and wordmark on one baseline. The header keeps the wordmark alone, so the
+   mark appears exactly twice across the product — here and in the browser tab. */
+.footer-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+}
+
+.footer-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+}

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="BOTLatch">
+  <!--
+    A keeper open on one side, closed by a bolt.
+
+    Two shapes only, both heavy: anything finer collapses at 16px, which is the size this is
+    actually seen at. Silver carries the structure and orange the bolt, matching the rest of the
+    interface, where orange is reserved for the thing that acts. The dark tile is deliberate — a
+    transparent mark disappears against a light browser tab.
+  -->
+  <rect width="32" height="32" rx="7" fill="#0a0a0a" />
+  <path
+    d="M22.5 8.5H11.5v15h11"
+    fill="none"
+    stroke="#c8c8c8"
+    stroke-width="3.5"
+    stroke-linecap="square"
+  />
+  <rect x="18.5" y="13.25" width="9.5" height="5.5" rx="1.25" fill="#ff5400" />
+</svg>
