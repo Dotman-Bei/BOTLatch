@@ -23,8 +23,13 @@ test with an amount you are willing to lose.
 
 | Network | Chain | Escrow | Explorer |
 | --- | ---: | --- | --- |
-| BOT testnet | 968 | `0xcb152965e87F765eb8b5F91CEfFA59510DA1E6B4` | [scan.bohr.life](https://scan.bohr.life/address/0xcb152965e87f765eb8b5f91ceffa59510da1e6b4) — source verified |
+| BOT testnet | 968 | `0xd4fa1258D1A60639E4C8BAe59e3110054Dd622cc` | [scan.bohr.life](https://scan.bohr.life/address/0xd4fa1258d1a60639e4c8bae59e3110054dd622cc) — source verified |
 | BOT mainnet | 677 | not yet deployed | [scan.botchain.ai](https://scan.botchain.ai) |
+
+An earlier testnet escrow at `0xcb152965…E6B4` is retired. It was deployed with Anvil's well-known
+development keys as verifier and owner — fine for a local rehearsal, and unusable in public, since
+anyone holding those keys could have signed a `GO` for any job on it. The current deployment uses a
+verifier key generated for it alone, and an owner key that is not on any server.
 
 All three settlement paths have been executed end to end on testnet, each driven by the verifier's
 signed decision rather than by an operator moving funds:
