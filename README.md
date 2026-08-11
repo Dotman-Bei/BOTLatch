@@ -8,7 +8,8 @@ and settles: release, hold, or refund. The AI decision *is* the settlement condi
 about one.
 
 <p>
-  <a href="https://scan.bohr.life/address/0xd4fa1258d1a60639e4c8bae59e3110054dd622cc"><strong>◆ Escrow contract — source verified</strong></a>
+  <a href="https://bot-latch.vercel.app"><strong>▶ Live site</strong></a>
+  &nbsp;·&nbsp; <a href="https://scan.bohr.life/address/0xd4fa1258d1a60639e4c8bae59e3110054dd622cc"><strong>◆ Escrow contract — source verified</strong></a>
   &nbsp;·&nbsp; <a href="./docs/architecture.md">Architecture</a>
   &nbsp;·&nbsp; <a href="./docs/threat-model.md">Threat model</a>
   &nbsp;·&nbsp; <a href="./docs/deployment.md">Deployment</a>
