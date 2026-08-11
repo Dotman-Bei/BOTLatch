@@ -1,4 +1,4 @@
-# BOTLatch — AI-gated escrow for agent work
+# BOTLatch
 
 **BOTLatch is the escrow you put between an agent's work and its payment.** A buyer funds a job
 against a brief. When the provider delivers, a verification agent reads the delivery against that
