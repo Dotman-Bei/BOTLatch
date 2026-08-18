@@ -13,7 +13,15 @@ import { PUBLIC_CONFIG } from "@/lib/config";
  * and the transaction that refunded the buyer is worth reading.
  */
 
-/** Recorded on BOT testnet. Update alongside the addresses when mainnet evidence exists. */
+/**
+ * Recorded settlements, with the network stated rather than inferred.
+ *
+ * These ran on testnet against an escrow with the same source as the mainnet one. They are kept
+ * and labelled rather than hidden once mainnet is live: they are the honest record of all three
+ * verdicts being exercised, and a reader can check every one. Mainnet rows are appended as real
+ * jobs settle there — the label on each row is what tells the reader which chain it is on, so a
+ * row can never imply a chain it did not settle on.
+ */
 const PROOF = {
   network: "BOT Chain testnet · chain 968",
   explorer: "https://scan.bohr.life",
@@ -354,7 +362,15 @@ export default function LandingPage() {
         <h2 className="etched">Every outcome, settled for real.</h2>
         <p className="section-lede">
           All three settlement paths executed end to end on {PROOF.network}, each driven by a signed
-          verdict rather than by an operator moving funds.
+          verdict rather than by an operator moving funds. The escrow now running on{" "}
+          <a
+            href={`${explorerUrl}/address/${escrowAddress ?? ""}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            BOT Chain mainnet
+          </a>{" "}
+          is the same contract source, verified on BOTScan.
         </p>
         <div className="panel" style={{ marginTop: "var(--s6)" }}>
           {PROOF.runs.map((run) => (

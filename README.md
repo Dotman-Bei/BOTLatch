@@ -9,11 +9,11 @@ about one.
 
 <p>
   <a href="https://bot-latch.vercel.app"><strong>▶ Live site</strong></a>
-  &nbsp;·&nbsp; <a href="https://scan.bohr.life/address/0xd4fa1258d1a60639e4c8bae59e3110054dd622cc"><strong>◆ Escrow contract — source verified</strong></a>
+  &nbsp;·&nbsp; <a href="https://scan.botchain.ai/address/0xfa3f7a624e905be60e84c056aa67d8b8c193725b"><strong>◆ Mainnet escrow — source verified</strong></a>
   &nbsp;·&nbsp; <a href="./docs/architecture.md">Architecture</a>
   &nbsp;·&nbsp; <a href="./docs/threat-model.md">Threat model</a>
   &nbsp;·&nbsp; <a href="./docs/deployment.md">Deployment</a>
-  &nbsp;·&nbsp; MIT · BOT Chain testnet (chain 968)
+  &nbsp;·&nbsp; MIT · BOT Chain mainnet (chain 677)
 </p>
 
 <p>
@@ -28,6 +28,18 @@ about one.
 </p>
 
 ---
+
+## Deployments
+
+| network | chain | escrow | source |
+| --- | ---: | --- | --- |
+| **BOT mainnet** | **677** | [`0xfa3f7a624E905bE60e84c056aa67d8b8c193725B`](https://scan.botchain.ai/address/0xfa3f7a624e905be60e84c056aa67d8b8c193725b) | verified |
+| BOT testnet | 968 | [`0xd4fa1258D1A60639E4C8BAe59e3110054Dd622cc`](https://scan.bohr.life/address/0xd4fa1258d1a60639e4c8bae59e3110054dd622cc) | verified |
+
+Mainnet owner `0xE685f7D9…3446`, verifier `0xa3C1b17d…114C` — both generated for that deployment and
+distinct from the testnet pair, so a key that can sign on one chain cannot sign on the other. The
+owner may rotate the verifier if it is ever exposed and can never move escrowed funds; every payout
+target is fixed when a job is funded.
 
 ## The problem
 
@@ -90,10 +102,12 @@ screener never expands.
 validation resolves to CAUTION and holds the funds. No failure anywhere in the verification path
 can produce a GO.
 
-## Proof — real settlements on BOT Chain testnet
+## Proof — all three verdicts settled on-chain
 
-Escrow [`0xd4fa1258…622cc`](https://scan.bohr.life/address/0xd4fa1258d1a60639e4c8bae59e3110054dd622cc),
-source verified, verifier `0x2774Da99…6ADB4`, owner held off-server.
+Run on BOT Chain testnet against escrow
+[`0xd4fa1258…622cc`](https://scan.bohr.life/address/0xd4fa1258d1a60639e4c8bae59e3110054dd622cc) —
+the same contract source now verified on mainnet. Each row names its chain, so no result implies a
+network it did not settle on.
 
 | verdict | cause | outcome | tx |
 | --- | --- | --- | --- |
@@ -205,9 +219,8 @@ times out, or returns nonsense yields CAUTION, never GO.
 
 ## Status
 
-Pre-audit. The contract is tested and running on BOT Chain testnet with verified source; it has not
-been through external review and is not yet on mainnet. Treat the first mainnet deployment as a test
-with an amount you are willing to lose.
+Pre-audit. Deployed to BOT Chain mainnet with verified source, and not through external review.
+Use amounts you are willing to lose.
 
 ## Licence
 
