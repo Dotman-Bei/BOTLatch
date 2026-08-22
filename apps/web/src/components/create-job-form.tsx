@@ -349,8 +349,8 @@ export function CreateJobForm({ escrowAddress }: { escrowAddress: Hex }) {
             disabled={busy}
           />
           <p className="hint">
-            Your brief is not published on the blockchain — only a fingerprint of it is. That is
-            enough to prove later that nobody edited it, without making what you wrote public.
+            Your brief is not published on the blockchain. Only a fingerprint of it is, and that
+            is enough to prove later that nobody edited it, without making what you wrote public.
           </p>
         </label>
 

@@ -78,8 +78,8 @@ export function JobOutcome({ jobId, escrowAddress }: { jobId: string; escrowAddr
           {!isBuyer && !isProvider && (
             <span className="role-tag role-observer">
               {address
-                ? "You are neither party — viewing only"
-                : "Not connected — viewing only"}
+                ? "You are neither party · viewing only"
+                : "Not connected · viewing only"}
             </span>
           )}
         </p>
@@ -123,8 +123,8 @@ export function JobOutcome({ jobId, escrowAddress }: { jobId: string; escrowAddr
           is theirs to trigger. Nothing happens until the provider is actually sent the link. */}
       {job.statusCode === 1 && isBuyer && (
         <Notice>
-          <strong>Waiting on the provider.</strong> Send them this link so they can submit the work
-          — nothing is reviewed until they do:{" "}
+          <strong>Waiting on the provider.</strong> Send them this link so they can submit the
+          work. Nothing is reviewed until they do:{" "}
           <Link className="mono" href={`/jobs/${jobId}/deliver`}>
             /jobs/{jobId}/deliver
           </Link>
@@ -189,7 +189,7 @@ export function JobOutcome({ jobId, escrowAddress }: { jobId: string; escrowAddr
           <p className="hint" style={{ marginTop: "var(--s4)" }}>
             These fingerprints were recorded on-chain when the job was funded and when the work was
             sent. If either the brief or the delivery were edited afterwards, the fingerprint would
-            no longer match — so neither side can quietly change what was agreed.
+            no longer match, so neither side can quietly change what was agreed.
           </p>
         </div>
       </section>
@@ -248,7 +248,7 @@ export function JobOutcome({ jobId, escrowAddress }: { jobId: string; escrowAddr
       ) : (
         job.statusCode >= 2 && (
           <Notice tone="warn">
-            This site has no record of the reasoning behind this job&rsquo;s verdict — it was
+            This site has no record of the reasoning behind this job&rsquo;s verdict. It was
             reviewed somewhere else. The verdict recorded on-chain still stands and still decides
             the money.
           </Notice>

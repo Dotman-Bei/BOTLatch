@@ -5,7 +5,7 @@ import { NotConfigured } from "@/components/ui";
 import { ESCROW_ADDRESS } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "Submit delivery — BOTLatch",
+  title: "Submit delivery · BOTLatch",
   robots: { index: false, follow: false },
 };
 

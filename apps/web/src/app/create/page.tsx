@@ -4,7 +4,7 @@ import { NotConfigured } from "@/components/ui";
 import { ESCROW_ADDRESS } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "Create a job — BOTLatch",
+  title: "Create a job · BOTLatch",
   description: "Lock BOT in escrow against a brief. The verification agent gates the payout.",
 };
 

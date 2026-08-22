@@ -11,7 +11,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { jobId } = await params;
   return {
-    title: `Job #${jobId} — BOTLatch`,
+    title: `Job #${jobId} · BOTLatch`,
     description: "Escrow state, verification verdict and settlement for a BOTLatch job.",
   };
 }

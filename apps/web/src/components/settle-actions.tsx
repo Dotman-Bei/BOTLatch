@@ -163,7 +163,7 @@ export function SettleActions({
           {evaluation.verdict === "GO" && " and pays the provider"}
           {evaluation.verdict === "NO_GO" && " and returns the full amount to the buyer"}
           {evaluation.verdict === "CAUTION" && ", which keeps the money in escrow and leaves the choice to the buyer"}
-          . Anyone can send it, including someone with no stake in the job — the signed verdict
+          . Anyone can send it, including someone with no stake in the job. The signed verdict
           decides what happens, not who submits it.
         </p>
         <button type="button" className="btn" onClick={settle} disabled={!isConnected || wrongChain || busy}>
@@ -185,7 +185,7 @@ export function SettleActions({
       <>
         <p className="dim small">
           The verifier could not clear this automatically, so the funds are still locked and the
-          decision is yours. Read the reasons above before choosing — both actions are final.
+          decision is yours. Read the reasons above before choosing. Both actions are final.
         </p>
         <div className="row">
           <button type="button" className="btn" onClick={() => resolve(true)} disabled={wrongChain || busy}>

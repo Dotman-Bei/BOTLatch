@@ -69,6 +69,9 @@
   --s6: 2rem;
   --s7: 3rem;
   --s8: 4.5rem;
+  /* Section rhythm. Every landing band pads by this top and bottom, which is what
+     gives the page its breathing room without a single margin passed in by hand. */
+  --s9: 5.5rem;
 
   /* Industrial edges: nearly square, never pill-shaped */
   --radius: 2px;
@@ -195,6 +198,9 @@ a:hover {
    headline toward the fold. Scoped with :has so interior pages, which have no hero, keep theirs. */
 .main:has(> .hero:first-child) {
   padding-top: 0;
+  /* Landing sections own their vertical padding, so the shared bottom pad would only stack on top
+     of the last band's. */
+  padding-bottom: 0;
 }
 
 .stack > * + * {
@@ -871,15 +877,17 @@ a:hover {
 .hero-inner {
   position: relative;
   z-index: 1;
-  /* Wider than the left-aligned measure it replaces: centred text needs the extra room to avoid
-     a ragged column, but stays well short of the container so the eye still has an edge to track. */
-  max-width: 60ch;
+  /* Two measures, not one. A 60ch column set at body size is right for the paragraph and far too
+     narrow for a 68px headline, which broke across four lines inside it. The block is sized for the
+     headline; the paragraph takes its own narrower measure below. */
+  max-width: 810px;
   margin-inline: auto;
   text-align: center;
 }
 
 /* .lede carries its own max-width, which would otherwise pin it to the left of the centred block. */
 .hero-inner .lede {
+  max-width: 34em;
   margin-inline: auto;
 }
 
@@ -891,16 +899,21 @@ a:hover {
   color: var(--accent);
 }
 
+.hero h1 {
+  text-wrap: balance;
+}
+
 /* Scoped to the hero: this is the longest eyebrow in the app. The short step labels on the other
    pages keep the shared size. */
 .hero .eyebrow {
   font-size: 0.5625rem;
 }
 
-/* The strip sits outside .hero-inner so it can run wider than the text column. */
+/* The bar sits outside .hero-inner so it can run wider than the text column, and stops short of
+   the container so it reads as an instrument mounted on the hero rather than as its floor. */
 .hero .status-strip {
-  justify-content: center;
-  text-align: center;
+  max-width: 940px;
+  margin-inline: auto;
 }
 
 /* ---- 12. Landing page ---------------------------------------------------
@@ -908,39 +921,53 @@ a:hover {
    claim on that page is shown as a recorded trace rather than asserted in
    prose, so most of this is terminal-flavoured: mono, tight leading, verdict
    colour carrying the meaning.
+
+   Vertical rhythm belongs to the section rather than to a margin the page
+   passes in: each band owns its own padding, and every other band takes the
+   darker surface so the eye gets a boundary without another hairline. The
+   result reads as stacked plates instead of one continuous column of text.
    ------------------------------------------------------------------------ */
 
-/* Status strip under the hero: what this deployment is actually pointed at. */
-.status-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s5);
-  padding: var(--s4) 0 0;
-  margin-top: var(--s6);
-  border-top: 1px solid var(--border);
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
+.section {
+  padding-block: var(--s9);
 }
 
-.status-strip > div {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.section-band {
+  background: var(--bg-darker);
+  border-block: 1px solid var(--border);
 }
 
-.status-strip dt {
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.6875rem;
+/* For a band that closes the page rather than making an argument in it. */
+.section-tight {
+  padding-block: var(--s7);
 }
 
-.status-strip dd {
-  margin: 0;
-  color: var(--fg-dim);
+/* The head sets the measure; whatever structural block follows it gets the same standoff, so no
+   section has to pass its own top margin in. */
+.section-head + .grid-2,
+.section-head + .grid-3 {
+  margin-top: var(--s7);
 }
 
-/* Section headers with a mono kicker above the title. */
+/* Section headers: mono kicker, etched title, one constrained paragraph.
+   Centred to a measure short enough to read in one eye movement — the grids
+   below stay full width, so the page alternates between a narrow text column
+   and a wide structural one rather than running everything to the margins. */
+.section-head {
+  max-width: 62rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* Same reason as the hero: ch measured at body size is the paragraph's measure, and imposing it on
+   a 34px heading breaks it into a ragged three-line pyramid. The heading gets its own. */
+.section-head h2 {
+  max-width: 28ch;
+  margin-inline: auto;
+  /* Centred headings that wrap without this leave a one-word orphan on the last line. */
+  text-wrap: balance;
+}
+
 .kicker {
   font-family: var(--font-mono);
   font-size: var(--step--1);
@@ -952,18 +979,119 @@ a:hover {
 
 .section-lede {
   max-width: 62ch;
+  margin-inline: auto;
   color: var(--fg-dim);
   margin-top: var(--s4);
 }
 
-/* Recorded evaluation traces. */
+/* A closing note under a grid: same measure, same centring, quieter. */
+.section-note {
+  max-width: 68ch;
+  margin: var(--s6) auto 0;
+  text-align: center;
+  color: var(--fg-dim);
+  font-size: var(--step--1);
+  line-height: 1.7;
+}
+
+/* ---- Hero status bar ----------------------------------------------------
+   The four facts about this deployment, read as a protocol dashboard rather
+   than as a caption: one machined plate, hairline-divided cells, mono values.
+   The 1px grid gap over a border-coloured backing plate gives the dividers
+   without a border on every cell, so no join is ever drawn twice.
+   ------------------------------------------------------------------------ */
+
+.status-strip {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--s7);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow:
+    0 26px 50px -34px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.status-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  min-width: 0;
+  padding: var(--s4) var(--s5);
+  background: var(--bg-card);
+  text-align: left;
+}
+
+.status-cell dt {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.status-cell dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  color: var(--fg-dim);
+  overflow-wrap: anywhere;
+}
+
+/* The one cell describing something live rather than fixed. */
+.status-cell .dot {
+  width: 6px;
+  height: 6px;
+  color: var(--accent);
+}
+
+/* ---- Recorded traces ----------------------------------------------------
+   Two cards that have to be told apart before either is read: the verdict
+   colour runs along the top edge and tints the frame, so the block or pass
+   reading survives a glance from across the room.
+   ------------------------------------------------------------------------ */
+
 .trace {
-  background: var(--bg-darker);
+  position: relative;
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+.trace::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: var(--border-light);
+}
+
+.trace.is-stop {
+  border-color: rgba(255, 59, 48, 0.3);
+}
+.trace.is-stop::before {
+  background: var(--stop);
+  box-shadow: 0 0 20px 1px var(--stop-glow);
+}
+
+.trace.is-go {
+  border-color: rgba(53, 208, 127, 0.3);
+}
+.trace.is-go::before {
+  background: var(--go);
+  box-shadow: 0 0 20px 1px var(--go-glow);
 }
 
 .trace-head {
@@ -973,7 +1101,7 @@ a:hover {
   gap: var(--s4);
   padding: var(--s4) var(--s5);
   border-bottom: 1px solid var(--border);
-  background: var(--bg-card);
+  background: var(--bg-darker);
 }
 
 .trace-title {
@@ -992,14 +1120,40 @@ a:hover {
   flex: 1;
 }
 
-/* The delivery text under evaluation. Quoted, never styled as instruction. */
-.trace-quote {
-  display: block;
-  border-left: 2px solid var(--border-light);
-  padding-left: var(--s4);
-  margin-bottom: var(--s4);
+/* The delivery text under evaluation, set as a terminal buffer: this is the
+   payload being parsed, not a sentence the page is saying. The header names
+   the stream, so the quote can never be mistaken for an instruction the page
+   is following. */
+.payload {
+  margin-bottom: var(--s5);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  background: #060606;
+  overflow: hidden;
+}
+
+.payload-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s2) var(--s3);
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.025);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--muted);
-  font-style: normal;
+}
+
+.payload-body {
+  display: block;
+  padding: var(--s4);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  line-height: 1.75;
+  color: var(--fg-dim);
 }
 
 .trace-line {
@@ -1047,66 +1201,287 @@ a:hover {
   padding: var(--s4) var(--s5);
   font-size: var(--step--1);
   color: var(--muted);
+  background: var(--bg-darker);
 }
 
-/* Pipeline: the ordered stages a job passes through. */
+/* ---- Pipeline -----------------------------------------------------------
+   Seven stages as a control panel: four across, two rows, hairline-divided.
+   The eighth cell of a seven-step grid would be dead space, so it carries the
+   rule that governs every stage above it instead.
+   ------------------------------------------------------------------------ */
+
 .pipeline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-  gap: var(--s2);
-  margin-top: var(--s6);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: var(--s7) 0 0;
   padding: 0;
   list-style: none;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 
-.pipeline li {
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s5);
+  background: var(--bg-card);
+  transition: background 140ms ease;
+}
+
+.stage:hover {
+  background: var(--bg-card-hover);
+}
+
+.stage-top {
   display: flex;
   align-items: center;
-  gap: var(--s2);
+  justify-content: space-between;
+  gap: var(--s3);
+  min-height: 1.75rem;
 }
 
-.pipeline .stage {
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  padding: var(--s3) var(--s4);
+.stage-n {
   font-family: var(--font-mono);
-  font-size: var(--step--1);
-  color: var(--fg-dim);
-  background: var(--bg-card);
-  white-space: nowrap;
+  font-size: var(--step-2);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--silver-dim);
 }
 
-.pipeline .stage b {
+.stage-name {
+  font-family: var(--font-mono);
+  font-size: var(--step-0);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.stage-copy {
+  margin: 0;
+  font-size: var(--step--1);
+  line-height: 1.6;
   color: var(--muted);
-  font-weight: 400;
-  margin-right: var(--s2);
 }
 
 /* The two stages that decide whether money moves carry the accent. */
-.pipeline .stage.is-gate {
-  border-color: var(--accent);
+.stage.is-gate {
+  background: rgba(255, 84, 0, 0.05);
+}
+.stage.is-gate:hover {
+  background: rgba(255, 84, 0, 0.085);
+}
+.stage.is-gate .stage-n {
   color: var(--accent);
-  background: rgba(255, 84, 0, 0.06);
+}
+.stage.is-gate .stage-name {
+  color: var(--accent-bright);
 }
 
-.pipeline .stage.is-gate b {
-  color: var(--accent-dim);
-}
-
-.pipeline .arrow {
-  color: var(--silver-dim);
+.stage-tag {
   font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  border-radius: var(--radius);
+  padding: 0.15rem 0.4rem;
+  white-space: nowrap;
 }
 
-/* On-chain proof rows. */
+.stage-note {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--s3);
+  padding: var(--s5);
+  background: var(--bg-darker);
+  box-shadow: inset 2px 0 0 var(--accent-dim);
+}
+
+.stage-note p {
+  margin: 0;
+  font-size: var(--step--1);
+  line-height: 1.6;
+  color: var(--fg-dim);
+}
+
+/* ---- Comparison cards ---------------------------------------------------
+   Used wherever the point is a boundary rather than a list: two columns of
+   equal weight, one divider between them, a mark at the head of each so the
+   reader knows which side they are on before reading a word.
+   ------------------------------------------------------------------------ */
+
+.compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: var(--s7);
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.compare-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  padding: var(--s6);
+  background: var(--bg-card);
+}
+
+.section-band .compare-col {
+  background: var(--bg-darker);
+}
+
+.compare-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+}
+
+.compare-mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  background: var(--bg-darker);
+  font-family: var(--font-mono);
+  font-size: var(--step-1);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--silver-dim);
+}
+
+.compare-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+.compare-body {
+  margin: 0;
+  font-size: var(--step--1);
+  line-height: 1.75;
+  color: var(--fg-dim);
+}
+
+/* A quoted delivery inside a comparison column: same terminal register as
+   .payload, sized for one sentence. */
+.compare-sample {
+  margin: 0;
+  padding: var(--s4);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--border-light);
+  border-radius: var(--radius);
+  background: #060606;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  line-height: 1.7;
+  color: var(--fg-dim);
+}
+
+/* Pushed to the bottom edge so both verdicts line up across the divider even
+   when the samples above them run to different lengths. */
+.compare-verdict {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s3);
+  margin: auto 0 0;
+  padding-top: var(--s4);
+  border-top: 1px solid var(--border);
+  font-size: var(--step--1);
+  line-height: 1.5;
+}
+
+.compare-col.is-go .compare-mark {
+  color: var(--go);
+  border-color: var(--go-dim);
+  background: rgba(53, 208, 127, 0.08);
+}
+.compare-col.is-go .compare-sample {
+  border-left-color: var(--go-dim);
+}
+.compare-col.is-go .compare-verdict {
+  color: var(--go);
+}
+
+.compare-col.is-stop .compare-mark {
+  color: var(--stop);
+  border-color: var(--stop-dim);
+  background: rgba(255, 59, 48, 0.08);
+}
+.compare-col.is-stop .compare-sample {
+  border-left-color: var(--stop-dim);
+}
+.compare-col.is-stop .compare-verdict {
+  color: var(--stop);
+}
+
+.compare-col.is-accent .compare-mark {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: rgba(255, 84, 0, 0.08);
+}
+
+.compare-col.is-silver .compare-mark {
+  color: var(--silver);
+  border-color: var(--border-light);
+}
+
+/* Supporting detail under a comparison: two quiet columns, never full bleed. */
+.compare-detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--s5) var(--s6);
+  margin-top: var(--s6);
+}
+
+.compare-detail p {
+  margin: 0;
+  font-size: var(--step--1);
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+/* ---- On-chain proof rows ------------------------------------------------
+   The panel holds the rows edge to edge and each row supplies its own
+   padding, so the hover fill runs the full width of the plate.
+   ------------------------------------------------------------------------ */
+
+.proof-table {
+  margin-top: var(--s7);
+  padding: 0;
+  overflow: hidden;
+}
+
 .proof-row {
   display: grid;
   grid-template-columns: 8rem 1fr auto;
   gap: var(--s4);
   align-items: center;
-  padding: var(--s4) 0;
+  padding: var(--s4) var(--s5);
   border-bottom: 1px solid var(--border);
+  transition: background 140ms ease;
+}
+
+.proof-row:hover {
+  background: var(--bg-card);
 }
 
 .proof-row:last-child {
@@ -1118,13 +1493,99 @@ a:hover {
   font-size: var(--step--1);
 }
 
-@media (max-width: 720px) {
+/* ---- 12b. Scroll entrance ----------------------------------------------
+   Opacity and transform only, so every reveal stays on the compositor. One
+   shared IntersectionObserver drives them (see components/reveal.tsx) and
+   unobserves on first entry, so scrolling back up costs nothing.
+
+   Two escape hatches, because content that never reveals is worse than
+   content that never animates: reduced motion, and no scripting at all.
+   ------------------------------------------------------------------------ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 640ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (scripting: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Above the fold there is nothing to scroll into, so the hero plays on load
+   and never waits for an observer. Stagger comes from an inline delay. */
+.rise {
+  animation: rise 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- Landing page, small screens ---------------------------------------- */
+
+@media (max-width: 980px) {
+  .pipeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .status-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .compare {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .compare-col {
+    padding: var(--s5);
+  }
+
   .proof-row {
     grid-template-columns: 1fr;
     gap: var(--s2);
   }
+}
+
+@media (max-width: 520px) {
+  .pipeline {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .status-strip {
-    gap: var(--s4);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stage,
+  .stage-note,
+  .status-cell {
+    padding: var(--s4);
   }
 }
 
@@ -1456,10 +1917,10 @@ a:hover {
     padding-block: var(--s6) var(--s7);
   }
 
-  /* Sections are spaced with an inline marginTop of --s8; at this width that is most of a screen
-     of empty space between every band. */
-  .container[style*="--s8"] {
-    margin-top: var(--s7) !important;
+  /* Section padding is generous by design, but --s9 top and bottom is most of a phone screen of
+     empty space between every band. */
+  .section {
+    padding-block: var(--s7);
   }
 
   .card,
@@ -1472,15 +1933,6 @@ a:hover {
 
   .footer {
     padding-block: var(--s6);
-  }
-
-  /* The stage chain wraps onto several lines, and an arrow at the end of a wrapped line points at
-     nothing. The order is already carried by the numbers. */
-  .pipeline .arrow {
-    display: none;
-  }
-  .pipeline {
-    gap: var(--s2);
   }
 
   /* Title and status stack rather than sitting at opposite ends of a narrow row. */
@@ -1509,12 +1961,8 @@ a:hover {
   }
 
   .trace-body,
-  .status-strip {
+  .status-cell dd {
     font-size: 0.75rem;
-  }
-
-  .status-strip {
-    gap: var(--s3) var(--s5);
   }
 
   .btn {

@@ -99,7 +99,7 @@ export function DeliverForm({ jobId, escrowAddress }: { jobId: string; escrowAdd
           throw new Error(
             `The hash is on-chain, but the text could not be stored: ${
               detail?.error ?? response.statusText
-            } Retry from this page — the hash must match exactly.`,
+            } Retry from this page. The hash must match exactly.`,
           );
         }
 
@@ -191,7 +191,7 @@ export function DeliverForm({ jobId, escrowAddress }: { jobId: string; escrowAdd
       ) : (
         <div style={{ marginBottom: "var(--s6)" }}>
           <Notice tone="warn">
-            The brief text was never stored with this deployment — only its hash is on-chain. Ask the
+            The brief text was never stored with this deployment. Only its hash is on-chain. Ask the
             buyer for it. Verification cannot run without it.
           </Notice>
         </div>
@@ -229,13 +229,13 @@ export function DeliverForm({ jobId, escrowAddress }: { jobId: string; escrowAdd
               style={{ minHeight: 320 }}
               value={delivery}
               onChange={(event) => setDelivery(event.target.value)}
-              placeholder="Paste the finished work. Answer the brief directly — the verification agent scores this text against it, and sees nothing else."
+              placeholder="Paste the finished work. Answer the brief directly. The verification agent scores this text against it, and sees nothing else."
               disabled={busy || !isProvider}
               spellCheck={false}
             />
             <p className="hint">
               Between {MIN_DELIVERY_CHARS} and {MAX_DELIVERY_CHARS.toLocaleString()} characters. Your
-              work is never published — only a fingerprint of it goes on the blockchain. The buyer
+              work is never published. Only a fingerprint of it goes on the blockchain. The buyer
               and the review see the text; nobody else does.
             </p>
           </label>
@@ -266,8 +266,8 @@ export function DeliverForm({ jobId, escrowAddress }: { jobId: string; escrowAdd
           )}
           {expired && (
             <Notice tone="error">
-              The deadline has passed. The buyer can now cancel and take the funds back — submitting
-              is likely to fail.
+              The deadline has passed. The buyer can now cancel and take the funds back, so
+              submitting is likely to fail.
             </Notice>
           )}
 
@@ -287,7 +287,7 @@ export function DeliverForm({ jobId, escrowAddress }: { jobId: string; escrowAdd
 
           <p className="hint" style={{ marginTop: "var(--s3)" }}>
             Your wallet will ask twice. The first records your work on the blockchain and costs gas.
-            The second is free and just proves the upload came from you — it moves no money.
+            The second is free and just proves the upload came from you. It moves no money.
           </p>
 
           {txHash && (
